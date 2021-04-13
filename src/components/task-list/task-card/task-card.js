@@ -47,15 +47,15 @@ const TaskCard = (props) => {
           <a style={{ padding: "0px 10px 0px 0px" }}>#{props.task._id.substring(20,24)}</a>
           {props.task.title}
         </Card.Header>
-        <Card.Meta>{props.task.taskType}</Card.Meta>
+        <Card.Meta>{getTaskTypeText(props.task.taskType)}</Card.Meta>
         <Card.Description>{props.task.description}</Card.Description>
       </Card.Content>
       <Card.Content extra>
-        Assigned User:{" "}
+        Assigned User:
         {props.task.assignedUser ? props.task.assignedUser : "Not Assigned"}
         {enableAssignMe(props.task.assignedUser)}
         <a style={{ color: "#525252", padding: "0 8px", float: "right" }}>
-          Assigned By:{" "}
+          Assigned By:
           {props.task.assignee ? props.task.assignee : "Not Assigned yet"}
         </a>
       </Card.Content>
