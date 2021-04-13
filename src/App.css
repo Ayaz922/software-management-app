@@ -1,0 +1,23 @@
+.App {
+  text-align: center;
+}
+.homeContainer{
+  padding-top: 16px;
+  background-color: blue;
+}
+
+.subhead{
+  font-size: medium;
+  padding: 0px 0;
+  color: blue;
+}
+
+.emptySpace{
+  padding-top: 16px;
+}
+.padHorizontal{
+  padding-right: 16px;
+}
+.wrapper{
+  padding: 16px 16px;
+}
