@@ -1,5 +1,6 @@
 import axios from "axios";
-const url = "http://localhost:3000/task";
+import { getCurrentUser } from "../user/user-profile";
+const url = "http://192.168.1.4:3000/task";
 
 const addTask = (taskModel, callback) => {
   axios.post(url, taskModel).then(
@@ -37,4 +38,36 @@ const getAllTask = (callback) => {
   );
 };
 
-export { addTask, getAllTask };
+const assignTaskToUser = ()=>{
+
+}
+
+const assignTaskToMe = (taskModel, callback)=> {
+  console.log("Assigning task to you, taskID: "+taskModel._id )
+  const userId = getCurrentUser()
+  const body ={
+    assignedUser:userId
+  }
+  const putURL = url+"/"+taskModel._id
+  console.log('Put URL: '+putURL)
+  axios.put(putURL,body).then(
+    (response) => {
+      if (response.status === 200) {
+        console.log(response.data);
+        callback(true, "Data saved successfully", response.data);
+      } else {
+        console.log(response.data);
+        callback(false, "Failed to save data", response.data);
+      }
+    },
+    (error) => {
+      callback(false, error, null);
+      console.log(error);
+    }
+  );
+  
+}
+
+
+
+export { addTask, getAllTask, assignTaskToMe, assignTaskToUser};

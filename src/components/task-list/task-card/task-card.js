@@ -1,26 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "semantic-ui-react";
+import { assignTaskToMe } from "../../../api/task-api";
+import {
+  getTaskTypeText,
+  getColorForPriority,
+} from "../../../utils/utils-functions";
 
 const TaskCard = (props) => {
-  const [isCollapsed, setIsCollapsed] = useState(true);
-  const enableAssignMe = (assignedUser) => {
-    if (!assignedUser) {
-      return <a style={{ color: "blue", padding: "0 8px" }}>Assign to Me</a>;
+  const [taskModel, updateTaskModel] = useState(props.task);
+
+  const enableAssignMe = (taskModel) => {
+    if (!taskModel.assignedUser) {
+      return (
+        <a
+          onClick={() => handleAssignMe(taskModel)}
+          style={{ color: "blue", padding: "0 8px" }}
+        >
+          Assign to Me
+        </a>
+      );
     }
     return;
   };
 
-  const getTaskTypeText = (taskType) => {
-    if (taskType === "BUG") return "Issue/Bug";
-    if (taskType === "EPIC") return "Epic";
-    return "User story";
+  const handleAssignMe = (taskModel) => {
+    assignTaskToMe(taskModel, (success, message, data) => {
+      updateTaskModel(data);
+      props.updateData();
+    });
   };
 
-  const getColorForPriority = (priority) => {
-    if (priority === "HIGH") return "red";
-    if (priority === "LOW") return "green";
-    return "blue";
-  };
+  //Use effect to listen to any changes from the parent
+  useEffect(() => {
+    updateTaskModel(props.task);
+  }, [props]);
 
   return (
     <Card fluid>
@@ -28,10 +41,10 @@ const TaskCard = (props) => {
         <a
           style={{
             float: "right",
-            color: getColorForPriority(props.task.priority),
+            color: getColorForPriority(taskModel.priority),
           }}
         >
-          {props.task.priority}
+          {taskModel.priority}
         </a>
         <a
           style={{
@@ -43,25 +56,27 @@ const TaskCard = (props) => {
           Priority:
         </a>
 
-        <Card.Header style={{fontSize:"14px"}}>
-          <a style={{ padding: "0px 10px 0px 0px" }}>#{props.task._id.substring(20,24)}</a>
-          {props.task.title}
+        <Card.Header style={{ fontSize: "14px" }}>
+          <a style={{ padding: "0px 10px 0px 0px" }}>
+            #{taskModel._id.substring(20, 24)}
+          </a>
+          {taskModel.title}
         </Card.Header>
-        <Card.Meta>{getTaskTypeText(props.task.taskType)}</Card.Meta>
-        <Card.Description>{props.task.description}</Card.Description>
+        <Card.Meta>{getTaskTypeText(taskModel.taskType)}</Card.Meta>
+        <Card.Description>{taskModel.description}</Card.Description>
       </Card.Content>
       <Card.Content extra>
         Assigned User:
-        {props.task.assignedUser ? props.task.assignedUser : "Not Assigned"}
-        {enableAssignMe(props.task.assignedUser)}
+        {taskModel.assignedUser ? taskModel.assignedUser : "Not Assigned"}
+        {enableAssignMe(taskModel)}
         <a style={{ color: "#525252", padding: "0 8px", float: "right" }}>
           Assigned By:
-          {props.task.assignee ? props.task.assignee : "Not Assigned yet"}
+          {taskModel.assignee ? taskModel.assignee : "Not Assigned yet"}
         </a>
       </Card.Content>
       <Card.Content inline extra>
         <a style={{ padding: "0px 10px 0px 0px", color: "grey" }}>
-          Created on: {new Date(props.task.createdAt).toLocaleDateString()}
+          Created on: {new Date(taskModel.createdAt).toLocaleDateString()}
         </a>
         <a
           style={{
@@ -70,7 +85,10 @@ const TaskCard = (props) => {
             color: "#525252",
           }}
         >
-          Due Date: {props.task.dueDate ? new Date(props.task.dueDate).toLocaleDateString() : "NA"}
+          Due Date:{" "}
+          {taskModel.dueDate
+            ? new Date(taskModel.dueDate).toLocaleDateString()
+            : "NA"}
         </a>
       </Card.Content>
     </Card>

@@ -129,7 +129,7 @@ const AddTaskComponent = () => {
   // const [attachments, setAttachments] = useState([]);
 
   return (
-    <Form>
+    <Form style={{padding:"1% 1%"}}>
       <h2>Add New User Story/Issue</h2>
       <Form.Group widths="equal">
         <Form.Input
