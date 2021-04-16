@@ -36,7 +36,7 @@ const TaskCard = (props) => {
   }, [props]);
 
   return (
-    <Card fluid>
+    <Card fluid size="mini">
       <Card.Content>
         <a
           style={{
@@ -62,21 +62,17 @@ const TaskCard = (props) => {
           </a>
           {taskModel.title}
         </Card.Header>
-        <Card.Meta>{getTaskTypeText(taskModel.taskType)}</Card.Meta>
-        <Card.Description>{taskModel.description}</Card.Description>
+        <Card.Meta inline>
+          <p>{getTaskTypeText(taskModel.taskType)}</p>
+        </Card.Meta>
       </Card.Content>
       <Card.Content extra>
-        Assigned User:
+        <i className="ui icon user"></i>
         {taskModel.assignedUser ? taskModel.assignedUser : "Not Assigned"}
         {enableAssignMe(taskModel)}
         <a style={{ color: "#525252", padding: "0 8px", float: "right" }}>
-          Assigned By:
-          {taskModel.assignee ? taskModel.assignee : "Not Assigned yet"}
-        </a>
-      </Card.Content>
-      <Card.Content inline extra>
-        <a style={{ padding: "0px 10px 0px 0px", color: "grey" }}>
-          Created on: {new Date(taskModel.createdAt).toLocaleDateString()}
+          Status:
+          {" " + taskModel.status}
         </a>
         <a
           style={{
@@ -85,7 +81,7 @@ const TaskCard = (props) => {
             color: "#525252",
           }}
         >
-          Due Date:{" "}
+          <i className="ui icon calendar alternate outline"></i>
           {taskModel.dueDate
             ? new Date(taskModel.dueDate).toLocaleDateString()
             : "NA"}
