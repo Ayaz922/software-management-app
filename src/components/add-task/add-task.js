@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Form, Button } from "semantic-ui-react";
+import { Form, Button, Modal } from "semantic-ui-react";
 import TaskModel from "../../models/task-model";
 import { addTask } from "../../api/task-api";
+import {getDeveloperList} from "../../user/user-profile"
 
 const AddTaskComponent = () => {
   let fileInputRef = {};
@@ -15,32 +16,32 @@ const AddTaskComponent = () => {
   const labels = [
     {
       key: "key",
-      text: "Label 1",
+      text: "Improvement",
       value: "value",
     },
     {
       key: "l1",
-      text: "Label 2",
+      text: "UI",
       value: "l1",
     },
     {
       key: "l2",
-      text: "Lable 3",
+      text: "Backend",
       value: "l2",
     },
     {
       key: "l3",
-      text: "Label 4",
+      text: "Cloud",
       value: "l3",
     },
     {
       key: "l4",
-      text: "Label 5",
+      text: "Performance",
       value: "l4",
     },
     {
       key: "l5",
-      text: "Label 6",
+      text: "Urgent",
       value: "l5",
     },
   ];
@@ -52,17 +53,18 @@ const AddTaskComponent = () => {
     priority: undefined,
   });
 
-  const allTeams = [
-    {
-      key: "Jenny Hess",
-      text: "Jenny Hess",
-      value: "Jenny Hess",
-      image: {
-        avatar: true,
-        src: "https://react.semantic-ui.com/images/avatar/small/jenny.jpg",
-      },
-    },
-  ];
+  const [successModalVisible,showSuccessModal] = useState(false)
+  const [loading,showLoading] = useState(false)
+
+
+  const allTeams = []
+  getDeveloperList().forEach((developer)=>{
+    allTeams.push({
+      key: developer.email,
+      text: developer.name,
+      value: developer.name,
+    })
+  })
 
   const priorityItems = [
     {
@@ -71,7 +73,28 @@ const AddTaskComponent = () => {
       value: "LOW",
       image: {
         avatar: true,
-        src: "https://react.semantic-ui.com/images/avatar/small/jenny.jpg",
+        src: "https://www.iconsdb.com/icons/preview/green/circle-xxl.png",
+        size:'tiny'
+      },
+    },
+    {
+      key: "medium",
+      text: "Medium",
+      value: "Medium",
+      image: {
+        avatar: true,
+        src: "https://www.iconsdb.com/icons/preview/royal-blue/circle-xxl.png",
+        size:'tiny'
+      },
+    },
+    {
+      key: "high",
+      text: "High",
+      value: "HIGH",
+      image: {
+        avatar: true,
+        src: "https://www.iconsdb.com/icons/preview/red/circle-xxl.png",
+        size:'tiny'
       },
     },
   ];
@@ -106,29 +129,58 @@ const AddTaskComponent = () => {
     TaskModel.assignedUser = assignedUser;
     TaskModel.taskType = taskType;
     TaskModel.lables = lables;
-
+    showLoading(true)
     addTask(TaskModel, (success, message, data) => {
       if (success) {
+        showLoading(false)
+        showSuccessModal(true)
+        clearForm()
         //Data is saved, show popup & clear form or close
       } else {
+        showLoading(false)
         //Could'nt save data show error pop, don't clear
       }
     });
   };
+
+  const clearForm = ()=>{
+    setTitle('')
+    setDescription('')
+    setStatus('')
+    setDueDate('')
+    setPriority('')
+    setAssignedUser('')
+    setTaskType('USER_STORY')
+    setLables([])
+  };
+
 
   //States
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [priority, setPriority] = useState("");
+  const [priority, setPriority] = useState('');
   const [assignedUser, setAssignedUser] = useState("");
   const [taskType, setTaskType] = useState("USER_STORY");
   const [lables, setLables] = useState([]);
+  const [attachments,setAttachments] = useState([])
   // const [comments, setComments] = useState([]);
   // const [attachments, setAttachments] = useState([]);
 
   return (
+    <div>
+    <Modal
+      open={successModalVisible}
+      header='Success!'
+      content='Task saved successfully!'
+      actions={[{ key: 'view', content: 'View Task'}, { key: 'done', content: 'Close', positive: true }]}
+      onActionClick={(e,data)=>{
+        console.log(e.target.innerHTML)
+        showSuccessModal(false)
+      }
+      }
+    />
     <Form style={{padding:"1% 1%"}}>
       <h2>Add New User Story/Issue</h2>
       <Form.Group widths="equal">
@@ -147,6 +199,7 @@ const AddTaskComponent = () => {
           label="Status"
           options={options}
           placeholder="Select Status"
+          value={status}
           onChange={(event, { value }) => {
             setStatus(value);
           }}
@@ -189,6 +242,7 @@ const AddTaskComponent = () => {
           label="Priority"
           placeholder="Select Priority"
           options={priorityItems}
+          value={priority}
           selection
           onChange={(e, { value }) => {
             setPriority(value);
@@ -199,6 +253,7 @@ const AddTaskComponent = () => {
           label="Assign Developer"
           placeholder="Select Developer"
           selection
+          value={assignedUser}
           options={allTeams}
           onChange={(e, { value }) => {
             setAssignedUser(value);
@@ -209,6 +264,7 @@ const AddTaskComponent = () => {
           <label>Due Date</label>
           <Form.Input
             type="Date"
+            value={dueDate}
             placeholder="00/00/0000"
             onChange={(e) => {
               setDueDate(e.target.value);
@@ -243,12 +299,15 @@ const AddTaskComponent = () => {
       <div className="emptySpace" />
       <Form.Group fluid>
         <Form.Input ref={fileInputRef} type="file" hidden />
-        <Form.Button icon="upload" />
+        <Form.Button icon="upload" onClick={()=>{
+          attachments.push(fileInputRef)
+          setAttachments(attachments)
+        }
+        }/>
       </Form.Group>
-      <div className="emptySpace" />
       <Form.Group>
         <Button.Group>
-          <Button primary onClick={saveTask}>
+          <Button primary onClick={saveTask} loading={loading}>
             Save
           </Button>
           <Button.Or />
@@ -256,6 +315,7 @@ const AddTaskComponent = () => {
         </Button.Group>
       </Form.Group>
     </Form>
+    </div>
   );
 };
 

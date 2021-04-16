@@ -123,6 +123,7 @@ const TaskList = () => {
         style={{ position: "absolute", top: "50%", left: "35%" }}
         fluid
         header="No Data Available"
+        loading
         list={[
           "Change filter setting that have been applied",
           "Reload page",
