@@ -21,3 +21,11 @@
 .wrapper{
   padding: 0px 8px;
 }
+
+.navbar{
+  position:absolute;
+}
+.content{
+ position: relative;
+ padding-top: 3%;
+}

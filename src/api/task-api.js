@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getCurrentUser } from "../user/user-profile";
-const url = "http://3.15.46.120:3000/task";
+const url = "http://localhost:8000/task";
 
 const addTask = (taskModel, callback) => {
   axios.post(url, taskModel).then(

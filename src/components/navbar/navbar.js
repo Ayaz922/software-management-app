@@ -9,14 +9,14 @@ function Navbar() {
     setActiveItem(name);
   };
   return (
-    <div style={{ background: "white" }}>
-      <Menu pointing secondary>
-      <Link to="/">
-        <Menu.Item
-          name="home"
-          active={activeItem === "home"}
-          onClick={handleItemClick}
-        />
+    <div style={{ position: "absolute" }}>
+      <Menu style={{ background: "white" }} pointing secondary fixed="top">
+        <Link to="/">
+          <Menu.Item
+            name="home"
+            active={activeItem === "home"}
+            onClick={handleItemClick}
+          />
         </Link>
         <Link to="/tasks">
           <Menu.Item
@@ -32,11 +32,13 @@ function Navbar() {
             onClick={handleItemClick}
           />
         </Link>
-        <Menu.Item
-          name="Projects"
-          active={activeItem === "Projects"}
-          onClick={handleItemClick}
-        />
+        <Link to="/project">
+          <Menu.Item
+            name="Projects"
+            active={activeItem === "Projects"}
+            onClick={handleItemClick}
+          />
+        </Link>
         <Menu.Menu position="right">
           <Menu.Item>Logout</Menu.Item>
         </Menu.Menu>
