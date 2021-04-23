@@ -12,11 +12,10 @@ const Board = () => {
   //Use effect hook
   useEffect(() => {
     if (originalData.length === 0 || shouldUpdateData) {
-      console.log("Console: Updating the data: " + shouldUpdateData);
       getAllTask(callback);
       setShouldUpdateData(false);
     }
-  }, [filteredList, shouldUpdateData]);
+  }, [filteredList, shouldUpdateData, originalData.length]);
 
   //Functions
 
@@ -26,7 +25,7 @@ const Board = () => {
       setOriginalData(data);
       setFilteredList(data);
     } else {
-      console.log("ERROR WHILE FETCHING THE DATA: " + message);
+      console.log(message);
     }
   };
 
@@ -34,7 +33,6 @@ const Board = () => {
     setShouldUpdateData(true);
   };
 
-  let cards = [];
   let backLogCards = [];
   let inProgressCards = [];
   let completeCards = [];

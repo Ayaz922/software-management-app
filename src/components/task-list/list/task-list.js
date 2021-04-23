@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from "react";
 import {
   CardGroup,
-  Menu,
-  Dropdown,
   Grid,
   GridColumn,
   Message,
-  Button,
 } from "semantic-ui-react";
 import { getAllTask } from "../../../api/task-api";
 import { getCurrentUser } from "../../../user/user-profile";
 import CustomFilter from "../../filter/filter";
-import NestDropdown from "../../nested-dropdown/nested-dropdown";
 import TaskCard from "../task-card/task-card";
 
 const TaskList = () => {
@@ -34,7 +30,7 @@ const TaskList = () => {
       getAllTask(callback);
       setShouldUpdateData(false);
     }
-  }, [filteredList, shouldUpdateData, filterArray]);
+  }, [filteredList, shouldUpdateData, filterArray, originalData.length]);
 
   //Functions
 

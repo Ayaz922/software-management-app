@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Checkbox, Dropdown, Form, Grid, GridColumn, Radio } from "semantic-ui-react";
+import { Checkbox, Form } from "semantic-ui-react";
 
 const CustomFilter = (props) => {
 
@@ -48,7 +48,6 @@ const CustomFilter = (props) => {
     dueDate: [],
   };
 
-  const generateDropdownData = () => {};
 
   return (
     <div>

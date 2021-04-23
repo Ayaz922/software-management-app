@@ -12,12 +12,12 @@ const TaskCard = (props) => {
   const enableAssignMe = (taskModel) => {
     if (!taskModel.assignedUser) {
       return (
-        <a
+        <span
           onClick={() => handleAssignMe(taskModel)}
           style={{ color: "blue", padding: "0 8px" }}
         >
           Assign to Me
-        </a>
+        </span>
       );
     }
     return;
@@ -38,15 +38,15 @@ const TaskCard = (props) => {
   return (
     <Card fluid size="mini">
       <Card.Content>
-        <a
+        <span
           style={{
             float: "right",
             color: getColorForPriority(taskModel.priority),
           }}
         >
           {taskModel.priority}
-        </a>
-        <a
+        </span>
+        <span
           style={{
             padding: "0px 10px 0px 0px",
             float: "right",
@@ -54,12 +54,12 @@ const TaskCard = (props) => {
           }}
         >
           Priority:
-        </a>
+        </span>
 
         <Card.Header style={{ fontSize: "14px" }}>
-          <a style={{ padding: "0px 10px 0px 0px" }}>
+          <span style={{ padding: "0px 10px 0px 0px" }}>
             #{taskModel._id.substring(20, 24)}
-          </a>
+          </span>
           {taskModel.title}
         </Card.Header>
         <Card.Meta inline>
@@ -70,11 +70,11 @@ const TaskCard = (props) => {
         <i className="ui icon user"></i>
         {taskModel.assignedUser ? taskModel.assignedUser : "Not Assigned"}
         {enableAssignMe(taskModel)}
-        <a style={{ color: "#525252", padding: "0 8px", float: "right" }}>
+        <span style={{ color: "#525252", padding: "0 8px", float: "right" }}>
           Status:
           {" " + taskModel.status}
-        </a>
-        <a
+        </span>
+        <span
           style={{
             padding: "0px 10px 0px 0px",
             float: "right",
@@ -85,7 +85,7 @@ const TaskCard = (props) => {
           {taskModel.dueDate
             ? new Date(taskModel.dueDate).toLocaleDateString()
             : "NA"}
-        </a>
+        </span>
       </Card.Content>
     </Card>
   );

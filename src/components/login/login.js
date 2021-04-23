@@ -6,6 +6,7 @@ import {
   Header,
   Image,
   Message,
+  Progress,
   Segment,
 } from "semantic-ui-react";
 import { login } from "../../api/login";
@@ -71,8 +72,9 @@ const LoginForm = () => {
           </Segment>
         </Form>
         <Message>
-          New to us? <a href="#">Sign Up</a>
+          New to us? <span>Sign Up</span>
         </Message>
+        <Progress loading={loading} ></Progress>
       </Grid.Column>
     </Grid>
   );

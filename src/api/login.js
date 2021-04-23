@@ -1,5 +1,4 @@
 import axios from "axios";
-import { getCurrentUser } from "../user/user-profile";
 const url = "http://localhost:8000";
 
 const login = (userDetail, callback)=>{
