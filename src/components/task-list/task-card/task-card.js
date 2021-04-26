@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card } from "semantic-ui-react";
 import { assignTaskToMe } from "../../../api/task-api";
+import {Link} from 'react-router-dom'
 import {
   getTaskTypeText,
   getColorForPriority,
@@ -36,7 +37,7 @@ const TaskCard = (props) => {
   }, [props]);
 
   return (
-    <Card fluid size="mini">
+    <Card fluid size="mini" >
       <Card.Content>
         <span
           style={{
@@ -57,12 +58,12 @@ const TaskCard = (props) => {
         </span>
 
         <Card.Header style={{ fontSize: "14px" }}>
-          <span style={{ padding: "0px 10px 0px 0px" }}>
+          <Link style={{ padding: "0px 10px 0px 0px" }} to={"/task/"+taskModel._id} >
             #{taskModel._id.substring(20, 24)}
-          </span>
+          </Link>
           {taskModel.title}
         </Card.Header>
-        <Card.Meta inline>
+        <Card.Meta>
           <p>{getTaskTypeText(taskModel.taskType)}</p>
         </Card.Meta>
       </Card.Content>

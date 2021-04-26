@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Form, Button, Modal } from "semantic-ui-react";
 import TaskModel from "../../models/task-model";
 import { addTask } from "../../api/task-api";
-import {getDeveloperList} from "../../user/user-profile"
+import {getAllTeamMember, getDeveloperList} from "../../user/user-profile"
 
 const AddTaskComponent = () => {
   let fileInputRef = {};
@@ -15,34 +15,34 @@ const AddTaskComponent = () => {
 
   const labels = [
     {
-      key: "key",
+      key: "l0",
       text: "Improvement",
-      value: "value",
+      value: "l0",
     },
     {
       key: "l1",
       text: "UI",
-      value: "l1",
+      value: "UI",
     },
     {
       key: "l2",
       text: "Backend",
-      value: "l2",
+      value: "Backend",
     },
     {
       key: "l3",
       text: "Cloud",
-      value: "l3",
+      value: "Cloud",
     },
     {
       key: "l4",
       text: "Performance",
-      value: "l4",
+      value: "Performance",
     },
     {
       key: "l5",
       text: "Urgent",
-      value: "l5",
+      value: "Urgent",
     },
   ];
 
@@ -176,7 +176,9 @@ const AddTaskComponent = () => {
       content='Task saved successfully!'
       actions={[{ key: 'view', content: 'View Task'}, { key: 'done', content: 'Close', positive: true }]}
       onActionClick={(e,data)=>{
-        console.log(e.target.innerHTML)
+        // console.log(e.target.innerHTML)
+        // if(e.target.innerHTML === 'View Task')
+          
         showSuccessModal(false)
       }
       }
@@ -253,8 +255,9 @@ const AddTaskComponent = () => {
           label="Assign Developer"
           placeholder="Select Developer"
           selection
+          clearable
           value={assignedUser}
-          options={allTeams}
+          options={getAllTeamMember()}
           onChange={(e, { value }) => {
             setAssignedUser(value);
           }}
@@ -282,7 +285,8 @@ const AddTaskComponent = () => {
         selection
         options={labels}
         value={lables}
-        onChange={(e, { value }) => {
+        onChange={(e, { text, value }) => {
+          console.log(text)
           setLables(value);
         }}
       />

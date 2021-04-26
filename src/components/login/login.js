@@ -4,14 +4,15 @@ import {
   Form,
   Grid,
   Header,
-  Image,
   Message,
   Progress,
   Segment,
 } from "semantic-ui-react";
 import { login } from "../../api/login";
+import {setLoggedIn, storeToken} from "../../services/authservice"
 
-const LoginForm = () => {
+const LoginForm = (props) => {
+  console.log(props)
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +27,9 @@ const LoginForm = () => {
     login({username,password},(success,message,data)=>{
       if(success){
       if(data.loggedIn){
-        alert("Logged in")
+        setLoggedIn(true)
+        storeToken(data.accessToken)
+        props.logginCallback(true)
       }else{
         alert("Couldn't log in")
       }
@@ -40,7 +43,7 @@ const LoginForm = () => {
     <Grid textAlign="center" style={{ height: "100vh" }} verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
         <Header as="h2" color="teal" textAlign="center">
-          <Image src="../../logo.svg" /> Log-in to your account
+         Log-in to your account
         </Header>
         <Form size="large">
           <Segment stacked>

@@ -1,6 +1,13 @@
+const devs = [
+    { key: 1, text: "Jon Doe(Admin)", value: "ayaz@airbus.com" },
+    { key: 2, text: "Jon Doe(PM)", value: "pm@airbus.com" },
+    { key: 3, text: "Jon Doe(Dev)", value: "dev@airbus.com" },
+    { key: 4, text: "Jon Doe(TesT)", value: "tester@airbus.com" }
+    ]
+
 
 const getCurrentUser = () => {
-    return  "Ayaz Alam"
+    return  "dev@airbus.com"
 }
 
 const getDeveloperList = ()=>{
@@ -16,4 +23,19 @@ const getDeveloperList = ()=>{
     ]
 }
 
-export {getCurrentUser, getDeveloperList}
+const getAllTeamMember = ()=>{
+  
+    return devs
+}
+
+const getUserNameFromUsername = (username)=>{
+    //pseudocode for the work, need to complete this tooo
+    let name = 'NA'
+    devs.forEach(user=>{
+        if(user.value === username)
+         name =  user.text
+    })
+    return name;
+}
+
+export {getCurrentUser, getDeveloperList, getAllTeamMember, getUserNameFromUsername}

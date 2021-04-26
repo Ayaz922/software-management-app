@@ -24,9 +24,7 @@ const Board = () => {
     if (success) {
       setOriginalData(data);
       setFilteredList(data);
-    } else {
-      console.log(message);
-    }
+    }//Else show a message or alert for error
   };
 
   const dataUpdateCallback = () => {
