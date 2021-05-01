@@ -29,7 +29,7 @@ const CustomFilter = (props) => {
   const filterDropdown = {
     type: [
       { key: 1, text: "User Story", value: "USER_STORY" },
-      { key: 2, text: "Issue/Bug", value: "BUG" },
+      { key: 2, text: "Issue/Bug", value: "ISSUE" },
       { key: 3, text: "Epic", value: "EPIC" },
     ],
     status: [

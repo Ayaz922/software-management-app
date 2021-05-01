@@ -1,10 +1,11 @@
-const getTaskTypeText = (taskType) => {
+//TODO
+const getTaskTypeText = (taskType:string) => {
   if (taskType === "ISSUE" || taskType === "BUG") return "Issue/Bug";
   if (taskType === "EPIC") return "Epic";
   return "User story";
 };
 
-const getColorForPriority = (priority) => {
+const getColorForPriority = (priority:string) => {
   if (priority === "HIGH") return "red";
   if (priority === "LOW") return "green";
   return "blue";

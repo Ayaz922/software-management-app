@@ -29,7 +29,7 @@ const priorityItems = [
 ];
 
 
-const labels = [
+const labelsOptions = [
   {
     key: "l0",
     text: "Improvement",
@@ -62,7 +62,7 @@ const labels = [
   },
 ];
 
-const getTextForTaskTypeId = (taskType) => {
+const getTextForTaskTypeId = (taskType:string) => {
   if (!taskType) return "NA";
   const text = taskStatusOptions.filter((item) => {
     return item.key === taskType;
@@ -71,4 +71,4 @@ const getTextForTaskTypeId = (taskType) => {
   return text ? text : "NA";
 };
 
-export { taskStatusOptions, getTextForTaskTypeId, labels, priorityItems};
+export { taskStatusOptions, getTextForTaskTypeId, labelsOptions, priorityItems};

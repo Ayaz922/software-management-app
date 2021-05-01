@@ -28,7 +28,7 @@ const getAllTeamMember = ()=>{
     return devs
 }
 
-const getUserNameFromUsername = (username)=>{
+const getUserNameFromUsername = (username:string)=>{
     //pseudocode for the work, need to complete this tooo
     let name = 'NA'
     devs.forEach(user=>{

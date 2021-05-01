@@ -4,48 +4,10 @@ import TaskModel from "../../models/task-model";
 import { addTask } from "../../api/task-api";
 import { getAllTeamMember, getDeveloperList } from "../../user/user-profile";
 import {useHistory} from 'react-router-dom'
+import { labelsOptions, priorityItems, taskStatusOptions } from "../../utils/general_data";
 
 const AddTaskComponent = () => {
   let fileInputRef = {};
-
-  const options = [
-    { key: "bl", text: "Backlog", value: "BACKLOG" },
-    { key: "ip", text: "In Progress", value: "ON_GOING" },
-    { key: "dn", text: "Completed", value: "COMPLETED" },
-  ];
-
-  const labels = [
-    {
-      key: "l0",
-      text: "Improvement",
-      value: "l0",
-    },
-    {
-      key: "l1",
-      text: "UI",
-      value: "UI",
-    },
-    {
-      key: "l2",
-      text: "Backend",
-      value: "Backend",
-    },
-    {
-      key: "l3",
-      text: "Cloud",
-      value: "Cloud",
-    },
-    {
-      key: "l4",
-      text: "Performance",
-      value: "Performance",
-    },
-    {
-      key: "l5",
-      text: "Urgent",
-      value: "Urgent",
-    },
-  ];
 
   const [errors, setErrors] = useState({
     title: undefined,
@@ -67,38 +29,7 @@ const AddTaskComponent = () => {
     });
   });
 
-  const priorityItems = [
-    {
-      key: "Low",
-      text: "Low",
-      value: "LOW",
-      image: {
-        avatar: true,
-        src: "https://www.iconsdb.com/icons/preview/green/circle-xxl.png",
-        size: "tiny",
-      },
-    },
-    {
-      key: "medium",
-      text: "Medium",
-      value: "Medium",
-      image: {
-        avatar: true,
-        src: "https://www.iconsdb.com/icons/preview/royal-blue/circle-xxl.png",
-        size: "tiny",
-      },
-    },
-    {
-      key: "high",
-      text: "High",
-      value: "HIGH",
-      image: {
-        avatar: true,
-        src: "https://www.iconsdb.com/icons/preview/red/circle-xxl.png",
-        size: "tiny",
-      },
-    },
-  ];
+  
 
   const validate = () => {
     if (title.trim() === "" || !title) {
@@ -150,7 +81,7 @@ const AddTaskComponent = () => {
     setDescription("");
     setStatus("");
     setDueDate("");
-    setPriority("");
+    setPriority("LOW");
     setAssignedUser("");
     setTaskType("USER_STORY");
     setLables([]);
@@ -161,13 +92,11 @@ const AddTaskComponent = () => {
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [priority, setPriority] = useState("");
+  const [priority, setPriority] = useState('LOW');
   const [assignedUser, setAssignedUser] = useState("");
-  const [taskType, setTaskType] = useState("USER_STORY");
+  const [taskType, setTaskType] = useState('USER_STORY');
   const [lables, setLables] = useState([]);
   const [attachments, setAttachments] = useState([]);
-  // const [comments, setComments] = useState([]);
-  // const [attachments, setAttachments] = useState([]);
 
   return (
     <div>
@@ -182,8 +111,7 @@ const AddTaskComponent = () => {
         onActionClick={(e, data) => {
           console.log(e.target.innerHTML);
           if (e.target.innerHTML === "View Task" && TaskModel._id) history.push("/task/" + TaskModel._id);
-
-          showSuccessModal(false);
+            showSuccessModal(false);
         }}
       />
       <Form style={{ padding: "1% 1%" }}>
@@ -202,7 +130,7 @@ const AddTaskComponent = () => {
           />
           <Form.Select
             label="Status"
-            options={options}
+            options={taskStatusOptions}
             placeholder="Select Status"
             value={status}
             onChange={(event, { value }) => {
@@ -285,7 +213,7 @@ const AddTaskComponent = () => {
           multiple
           search
           selection
-          options={labels}
+          options={labelsOptions}
           value={lables}
           onChange={(e, { text, value }) => {
             console.log(text);

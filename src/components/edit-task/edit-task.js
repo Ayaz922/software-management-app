@@ -7,8 +7,8 @@ import { getAllTeamMember, getDeveloperList } from "../../user/user-profile";
 import {useHistory} from 'react-router-dom'
 import {
   taskStatusOptions,
-  labels as lablesOptions,
   priorityItems,
+  labelsOptions,
 } from "../../utils/general_data";
 
 const EditTaskComponent = (props) => {
@@ -251,7 +251,7 @@ const EditTaskComponent = (props) => {
           multiple
           search
           selection
-          options={lablesOptions}
+          options={labelsOptions}
           value={lables}
           onChange={(e, { text, value }) => {
             console.log(value);

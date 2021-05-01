@@ -16,7 +16,6 @@ function Home() {
   const [isAutheticated,setIsAuthenticated] = useState(true)
 
   useEffect(()=>{
-    console.log('Rendering again with: '+isAutheticated)
   },[isAutheticated])
 
   return (
@@ -36,6 +35,7 @@ function Home() {
                 <Route path="/project" component={ProjectComponent} />
                 <Route path="/task/:id" exact component={DetailedTaskComponent} />
                 <Route path="/task/edit/:id" exact component={EditTaskComponent} />
+                <Route path="/login" exact component={LoginForm} />
                 <Route path="/" exact component={LandingScreen} />
               </Switch>
                ) : (

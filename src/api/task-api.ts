@@ -1,65 +1,68 @@
 import axiosInstance from "./axios";
 import { getCurrentUser } from "../user/user-profile";
+import TaskModel from "../models/task-model";
+import { apiCallback } from "../models/api-callback-function";
+import { commentModel } from "../models/comment-model";
+import { TaskStatus } from "../models/tast-status";
 const url = "/task";
 
-const addTask = (taskModel, callback) => {
+const addTask = (taskModel: TaskModel, callback: apiCallback) => {
   axiosInstance.post(url, taskModel).then(
     (response) => {
       if (response.status === 200) {
         console.log(response.data);
-        callback(true, "Data saved successfully", response.data);
+        callback(true, response.data, "Data saved successfully");
       } else {
         console.log(response.data);
-        callback(false, "Failed to save data", response.data);
+        callback(false, response.data, "Failed to save data");
       }
     },
     (error) => {
-      callback(false, error, null);
+      callback(false, error);
       console.log(error);
     }
   );
 };
 
-const editTask = (taskModel, callback) => {
+const editTask = (taskModel: TaskModel, callback: apiCallback) => {
   const taskId = taskModel._id;
-  delete taskModel['_id']
-  axiosInstance.put(url+"/update/"+taskId, taskModel).then(
+  delete taskModel["_id"];
+  axiosInstance.put(url + "/update/" + taskId, taskModel).then(
     (response) => {
       if (response.status === 200) {
         console.log(response.data);
-        callback(true, "Data saved successfully", response.data);
+        callback(true, response.data, "Data saved successfully");
       } else {
         console.log(response.data);
-        callback(false, "Failed to save data", response.data);
+        callback(false, response.data, "Failed to save data");
       }
     },
     (error) => {
-      callback(false, error, null);
+      callback(false, error);
       console.log(error);
     }
   );
 };
 
-
-const getAllTask = (callback) => {
+const getAllTask = (callback: apiCallback) => {
   axiosInstance.get(url).then(
     (response) => {
       if (response.status === 200) {
         console.log(response.data);
-        callback(true, "Data fetched successfully", response.data);
+        callback(true, response.data);
       } else {
         console.log(response.data);
-        callback(false, "Failed to fetch data", response.data);
+        callback(false, response.data);
       }
     },
     (error) => {
-      callback(false, error, null);
+      callback(false, null, error);
       console.log(error);
     }
   );
 };
 
-const getTask = (taskId, callback) => {
+const getTask = (taskId: string, callback: apiCallback) => {
   axiosInstance.get(url + "/" + taskId).then(
     (response) => {
       callback(true, response.data);
@@ -70,7 +73,7 @@ const getTask = (taskId, callback) => {
   );
 };
 
-const assignTaskToMe = (taskModel, callback) => {
+const assignTaskToMe = (taskModel: TaskModel, callback: apiCallback) => {
   const userId = getCurrentUser();
   const body = {
     assignedUser: userId,
@@ -80,53 +83,10 @@ const assignTaskToMe = (taskModel, callback) => {
     (response) => {
       if (response.status === 200) {
         console.log(response.data);
-        callback(true, "Data saved successfully", response.data);
+        callback(true, response.data, "Data saved successfully");
       } else {
         console.log(response.data);
-        callback(false, "Failed to save data", response.data);
-      }
-    },
-    (error) => {
-      callback(false, error, null);
-      console.log(error);
-    }
-  );
-};
-
-const assignTaskToUser = (taskModel, userId, callback) => {
-  const body = {
-    assignedUser: userId,
-  };
-  const putURL = url + "/assign/" + taskModel._id;
-  axiosInstance.put(putURL, body).then(
-    (response) => {
-      if (response.status === 200) {
-        console.log(response.data);
-        callback(true, "Data saved successfully", response.data);
-      } else {
-        console.log(response.data);
-        callback(false, "Failed to save data", response.data);
-      }
-    },
-    (error) => {
-      callback(false, error, null);
-      console.log(error);
-    }
-  );
-};
-
-const addCommentToTask = (taskId, commentModel, callback) => {
-  const body = {
-    comments: commentModel,
-  };
-  const putURL = url + "/addComment/" + taskId;
-  axiosInstance.put(putURL, body).then(
-    (response) => {
-      if (response.status === 200) {
-        callback(true, "Comment saved successfully");
-      } else {
-        console.log(response.data);
-        callback(false, "Failed to save data");
+        callback(false, response.data, "Failed to save data");
       }
     },
     (error) => {
@@ -136,43 +96,97 @@ const addCommentToTask = (taskId, commentModel, callback) => {
   );
 };
 
-const changeStatus = (taskId, status, callback) => {
+const assignTaskToUser = (
+  taskModel: TaskModel,
+  userId: string,
+  callback: apiCallback
+) => {
+  const body = {
+    assignedUser: userId,
+  };
+  const putURL = url + "/assign/" + taskModel._id;
+  axiosInstance.put(putURL, body).then(
+    (response) => {
+      if (response.status === 200) {
+        console.log(response.data);
+        callback(true, response.data, "Data saved successfully");
+      } else {
+        console.log(response.data);
+        callback(false, response.data, "Failed to save data");
+      }
+    },
+    (error) => {
+      callback(false, error);
+      console.log(error);
+    }
+  );
+};
+
+const addCommentToTask = (taskId: string, commentModel: commentModel, callback: apiCallback) => {
+  const body = {
+    comments: commentModel,
+  };
+  const putURL = url + "/addComment/" + taskId;
+  axiosInstance.put(putURL, body).then(
+    (response) => {
+      if (response.status === 200) {
+        callback(true, null, "Comment saved successfully");
+      } else {
+        console.log(response.data);
+        callback(false, null, "Failed to save data");
+      }
+    },
+    (error) => {
+      callback(false, error);
+      console.log(error);
+    }
+  );
+};
+
+const changeStatus = (
+  taskId: string,
+  status: TaskStatus,
+  callback: apiCallback
+) => {
   const body = {
     status,
   };
   axiosInstance
     .put(url + "/" + taskId, body)
-    .then(response=> {
+    .then((response) => {
       console.log(response);
     })
-    .catch(err => {
-      sendError(err,callback)
+    .catch((err) => {
+      sendError(err, callback);
     });
 };
 
-const changeDueDate = (taskId, dueDate, callback) => {
+const changeDueDate = (
+  taskId: string,
+  dueDate: Date,
+  callback: apiCallback
+) => {
   const body = {
     dueDate,
   };
   axiosInstance
     .put(url + "/update/" + taskId, body)
-    .then(response=> {
+    .then((response) => {
       console.log(response);
     })
-    .catch(err => {
-      sendError(err,callback)
+    .catch((err) => {
+      sendError(err, callback);
     });
 };
 
-
-const sendError = (err, callback) => {
+const sendError = (err: any, callback: apiCallback) => {
   if (err.response.status === 400)
-    callback(false, "Invalid request, Please check status id & status");
+    callback(false, null, "Invalid request, Please check status id & status");
   else if (err.response.status === 401)
-    callback(false, "You are not authorized to perform the operation");
+    callback(false, null, "You are not authorized to perform the operation");
   else if (err.response.status === 403)
-    callback(false, "You don't have permission to perform the operation");
-  else callback(false, "Internal Error");
+    callback(false, null, "You don't have permission to perform the operation");
+  else callback(false, null, "Internal Error");
 };
 
 export {
@@ -184,5 +198,5 @@ export {
   getTask,
   addCommentToTask,
   changeStatus,
-  changeDueDate
+  changeDueDate,
 };

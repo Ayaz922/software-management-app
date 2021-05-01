@@ -35,12 +35,12 @@ const TaskList = () => {
   //Functions
 
   //Callback after fetching the data from server
-  const callback = (success, message, data) => {
+  const callback = (success, data) => {
     if (success) {
       setOriginalData(data);
       setFilteredList(data);
     } else {
-      console.log("ERROR WHILE FETCHING THE DATA: " + message);
+      console.log("ERROR WHILE FETCHING THE DATA: " + data);
     }
   };
 
