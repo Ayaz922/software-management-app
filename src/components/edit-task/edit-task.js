@@ -1,52 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import moment from "moment";
 import { Form, Button, Modal } from "semantic-ui-react";
 import TaskModel from "../../models/task-model";
-import { addTask } from "../../api/task-api";
+import { editTask, getTask } from "../../api/task-api";
 import { getAllTeamMember, getDeveloperList } from "../../user/user-profile";
 import {useHistory} from 'react-router-dom'
+import {
+  taskStatusOptions,
+  labels as lablesOptions,
+  priorityItems,
+} from "../../utils/general_data";
 
-const AddTaskComponent = () => {
+const EditTaskComponent = (props) => {
+  const id = window.location.href.substring(
+    window.location.href.lastIndexOf("/") + 1
+  );
+
+  const callback = (success, response) => {
+    console.log(response);
+    if (success) {
+      console.log('Response Recieved',response);
+      setTask(response);
+      setValues(response);
+    } else alert(response);
+  };
+
+  useEffect(() => {
+    getTask(id, callback)
+  }, [id]);
+
+
+  const setValues = (task) => {
+    console.log('Setting up values',task)
+    setStatus(task.status);
+    task.dueDate
+      ? setDueDate(moment(task.dueDate).toDate())
+      : setDueDate(undefined);
+
+    setTitle(task.title);
+    setDescription(task.description);
+    setLables(task.lables);
+    setPriority(task.priority);
+    setTaskType(task.taskType);
+    setAssignedUser(task.assignedUser);
+  };
+
   let fileInputRef = {};
-
-  const options = [
-    { key: "bl", text: "Backlog", value: "BACKLOG" },
-    { key: "ip", text: "In Progress", value: "ON_GOING" },
-    { key: "dn", text: "Completed", value: "COMPLETED" },
-  ];
-
-  const labels = [
-    {
-      key: "l0",
-      text: "Improvement",
-      value: "l0",
-    },
-    {
-      key: "l1",
-      text: "UI",
-      value: "UI",
-    },
-    {
-      key: "l2",
-      text: "Backend",
-      value: "Backend",
-    },
-    {
-      key: "l3",
-      text: "Cloud",
-      value: "Cloud",
-    },
-    {
-      key: "l4",
-      text: "Performance",
-      value: "Performance",
-    },
-    {
-      key: "l5",
-      text: "Urgent",
-      value: "Urgent",
-    },
-  ];
-
   const [errors, setErrors] = useState({
     title: undefined,
     status: undefined,
@@ -66,39 +65,6 @@ const AddTaskComponent = () => {
       value: developer.name,
     });
   });
-
-  const priorityItems = [
-    {
-      key: "Low",
-      text: "Low",
-      value: "LOW",
-      image: {
-        avatar: true,
-        src: "https://www.iconsdb.com/icons/preview/green/circle-xxl.png",
-        size: "tiny",
-      },
-    },
-    {
-      key: "medium",
-      text: "Medium",
-      value: "Medium",
-      image: {
-        avatar: true,
-        src: "https://www.iconsdb.com/icons/preview/royal-blue/circle-xxl.png",
-        size: "tiny",
-      },
-    },
-    {
-      key: "high",
-      text: "High",
-      value: "HIGH",
-      image: {
-        avatar: true,
-        src: "https://www.iconsdb.com/icons/preview/red/circle-xxl.png",
-        size: "tiny",
-      },
-    },
-  ];
 
   const validate = () => {
     if (title.trim() === "" || !title) {
@@ -121,7 +87,7 @@ const AddTaskComponent = () => {
 
   const saveTask = () => {
     if (!validate()) return;
-
+    TaskModel._id = id
     TaskModel.title = title;
     TaskModel.description = description;
     TaskModel.status = status;
@@ -131,12 +97,10 @@ const AddTaskComponent = () => {
     TaskModel.taskType = taskType;
     TaskModel.lables = lables;
     showLoading(true);
-    addTask(TaskModel, (success, message, data) => {
+    editTask(TaskModel, (success, message, data) => {
       if (success) {
         showLoading(false);
         showSuccessModal(true);
-        TaskModel._id = data._id;
-        clearForm();
         //Data is saved, show popup & clear form or close
       } else {
         showLoading(false);
@@ -157,6 +121,7 @@ const AddTaskComponent = () => {
   };
 
   //States
+  const [task, setTask] = useState({});
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("");
@@ -166,9 +131,7 @@ const AddTaskComponent = () => {
   const [taskType, setTaskType] = useState("USER_STORY");
   const [lables, setLables] = useState([]);
   const [attachments, setAttachments] = useState([]);
-  // const [comments, setComments] = useState([]);
-  // const [attachments, setAttachments] = useState([]);
-
+  
   return (
     <div>
       <Modal
@@ -180,8 +143,12 @@ const AddTaskComponent = () => {
           { key: "done", content: "Close", positive: true },
         ]}
         onActionClick={(e, data) => {
-          console.log(e.target.innerHTML);
-          if (e.target.innerHTML === "View Task" && TaskModel._id) history.push("/task/" + TaskModel._id);
+          console.log(e.target.innerHTML)
+          console.log(data)
+          if(e.target.innerHTML === 'View Task'){
+            console.log('Opening task')
+            history.push('/task/'+id)
+          }
 
           showSuccessModal(false);
         }}
@@ -202,7 +169,7 @@ const AddTaskComponent = () => {
           />
           <Form.Select
             label="Status"
-            options={options}
+            options={taskStatusOptions}
             placeholder="Select Status"
             value={status}
             onChange={(event, { value }) => {
@@ -269,8 +236,7 @@ const AddTaskComponent = () => {
             <label>Due Date</label>
             <Form.Input
               type="Date"
-              value={dueDate}
-              placeholder="00/00/0000"
+              value={moment(dueDate).format('yyyy-MM-DD')}
               onChange={(e) => {
                 setDueDate(e.target.value);
               }}
@@ -285,10 +251,10 @@ const AddTaskComponent = () => {
           multiple
           search
           selection
-          options={labels}
+          options={lablesOptions}
           value={lables}
           onChange={(e, { text, value }) => {
-            console.log(text);
+            console.log(value);
             setLables(value);
           }}
         />
@@ -327,4 +293,4 @@ const AddTaskComponent = () => {
   );
 };
 
-export default AddTaskComponent;
+export default EditTaskComponent;

@@ -7,6 +7,7 @@ import LandingScreen from "../landing-screen/landing-screen";
 import LoginForm from "../login/login";
 import {useState, useEffect} from 'react'
 import ProjectComponent from "../projects/projects";
+import EditTaskComponent from "../edit-task/edit-task";
 import DetailedTaskComponent from "../detailed-task/detailed-task";
 
 function Home() {
@@ -34,6 +35,7 @@ function Home() {
                 <Route path="/tasks" component={TaskList} />
                 <Route path="/project" component={ProjectComponent} />
                 <Route path="/task/:id" exact component={DetailedTaskComponent} />
+                <Route path="/task/edit/:id" exact component={EditTaskComponent} />
                 <Route path="/" exact component={LandingScreen} />
               </Switch>
                ) : (

@@ -1,4 +1,8 @@
+import moment from "moment";
 import { useState, useEffect } from "react";
+import DatePicker from "react-date-picker";
+import './detailed-task.css'
+import {Link} from 'react-router-dom'
 
 import {
   Divider,
@@ -9,9 +13,20 @@ import {
   Button,
   Modal,
   Form,
+  Dropdown,
 } from "semantic-ui-react";
-import { assignTaskToMe, assignTaskToUser, getTask } from "../../api/task-api";
+import {
+  assignTaskToMe,
+  assignTaskToUser,
+  changeStatus,
+  getTask,
+  changeDueDate,
+} from "../../api/task-api";
 import { getAllTeamMember } from "../../user/user-profile";
+import {
+  getTextForTaskTypeId,
+  taskStatusOptions,
+} from "../../utils/general_data";
 import {
   getColorForPriority,
   getTaskTypeText,
@@ -29,6 +44,8 @@ const DetailedTaskComponent = () => {
   const [modalContent, setModalContent] = useState({});
   const [reloadPage, setReloadPage] = useState(false);
   const [assignedUser, setAssignedUser] = useState();
+  const [status, setStatus] = useState();
+  const [dueDate, setDueDate] = useState();
 
   useEffect(() => {
     getTask(id, callback);
@@ -78,14 +95,51 @@ const DetailedTaskComponent = () => {
     modal.header = header;
     modal.content = content;
     modal.action = action;
-    console.log(modal);
     setModalContent(modal);
   };
 
   const callback = (success, response) => {
     console.log(response);
-    if (success) setTask(response);
-    else alert(response);
+    if (success) {
+      setTask(response);
+      setStatus(response.status);
+      response.dueDate
+        ? setDueDate(moment(response.dueDate).toDate())
+        : setDueDate(undefined);
+    } else alert(response);
+  };
+
+  const handleStatusChange = (e, { value }) => {
+    if (status != value) setStatus(value);
+    generateModal("Alert!", "Are you sure you want to change status?", () => {
+      changeStatus(task._id, value, (success, message) => {
+        if (success) setReloadPage(true);
+        else {
+          setStatus(task.status);
+          alert(message);
+        }
+      });
+    });
+    setShowModal(true);
+  };
+
+  const onDueDateChanged = (newDueDate) => {
+    console.log(moment(newDueDate).toDate());
+    generateModal(
+      "Change due date?",
+      "Are you sure you want to change due date for this task?",
+      () => {
+        setDueDate(moment(newDueDate).toDate());
+        changeDueDate(task._id, newDueDate, (success, message) => {
+          if (success) setReloadPage(true);
+          else {
+            setDueDate(task.dueDate);
+            alert(message);
+          }
+        });
+      }
+    );
+    setShowModal(true);
   };
 
   let lables = [];
@@ -125,7 +179,8 @@ const DetailedTaskComponent = () => {
       <Grid style={{ padding: "10px 10px 0px 10px" }}>
         {/* Left Section */}
         <Grid.Column width={12}>
-          <span>ID: #{id.substring(20, 24)}</span>
+          <span>ID: #{id.substring(20, 24)}</span> 
+          <Link to={'/task/edit/'+task._id}>&nbsp;  <i class="edit outline icon"></i>Edit Task</Link>
           <h3>{task.title}</h3>
           <span>Description: {task.description}</span>
           <h5>Lables</h5>
@@ -160,7 +215,21 @@ const DetailedTaskComponent = () => {
               </Label>
             </List.Item>
             <List.Item>
-              <Label
+              <Button.Group color="purple" style={floatRight} size="tiny">
+                <Button clickable="false">
+                  {getTextForTaskTypeId(status)}
+                </Button>
+                <Dropdown
+                  className="button icon"
+                  floating
+                  value={status}
+                  options={taskStatusOptions}
+                  onChange={handleStatusChange}
+                  trigger={<></>}
+                />
+              </Button.Group>
+            </List.Item>
+            {/* <Label
                 style={floatRight}
                 color="purple" //getColor should be dynamic need to decide
                 size="medium"
@@ -168,17 +237,20 @@ const DetailedTaskComponent = () => {
                 Status
                 <Label.Detail>{task.status}</Label.Detail>
               </Label>
-            </List.Item>
+            </List.Item> */}
             <Divider hidden />
 
             <Divider hidden />
             <List.Item>
               <div style={floatRight}>
                 Due date &nbsp;
-                <Icon name="calendar alternate outline" />
-                {task.dueDate
-                  ? new Date(task.dueDate).toLocaleDateString()
-                  : "NA"}
+                <DatePicker
+                  style={floatRight}
+                  clearIcon
+                  value={dueDate}
+                  minDate={new Date()}
+                  onChange={onDueDateChanged}
+                />
               </div>
             </List.Item>
             <List.Item>
@@ -203,7 +275,7 @@ const DetailedTaskComponent = () => {
               </div>
             </List.Item>
             <List.Item>
-              <div style={floatRight}>
+              <div className='fillParent'>
                 {task.assignedUser ? (
                   <></>
                 ) : (

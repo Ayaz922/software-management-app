@@ -5,6 +5,7 @@ import {
   Divider,
   Form,
   Header,
+  Input,
   TextArea,
 } from "semantic-ui-react";
 import { addCommentToTask } from "../../api/task-api";
@@ -69,9 +70,10 @@ const CommentComponent = (props) => {
       {commentsComponents.length > 0 ? commentsComponents : "No Comments yet"}
 
       <Form reply size="mini">
-        <TextArea
+        <Input
           rows={2}
-          size="mini"
+          fluid
+          style={{height:"40px"}}
           placeholder="Write your comment"
           value={commentMessage}
           onChange={(event) => {

@@ -20,6 +20,27 @@ const addTask = (taskModel, callback) => {
   );
 };
 
+const editTask = (taskModel, callback) => {
+  const taskId = taskModel._id;
+  delete taskModel['_id']
+  axiosInstance.put(url+"/update/"+taskId, taskModel).then(
+    (response) => {
+      if (response.status === 200) {
+        console.log(response.data);
+        callback(true, "Data saved successfully", response.data);
+      } else {
+        console.log(response.data);
+        callback(false, "Failed to save data", response.data);
+      }
+    },
+    (error) => {
+      callback(false, error, null);
+      console.log(error);
+    }
+  );
+};
+
+
 const getAllTask = (callback) => {
   axiosInstance.get(url).then(
     (response) => {
@@ -72,8 +93,7 @@ const assignTaskToMe = (taskModel, callback) => {
   );
 };
 
-
-const assignTaskToUser = (taskModel,userId, callback) => {
+const assignTaskToUser = (taskModel, userId, callback) => {
   const body = {
     assignedUser: userId,
   };
@@ -93,10 +113,9 @@ const assignTaskToUser = (taskModel,userId, callback) => {
       console.log(error);
     }
   );
-
 };
 
-const addCommentToTask = (taskId,commentModel, callback) => {
+const addCommentToTask = (taskId, commentModel, callback) => {
   const body = {
     comments: commentModel,
   };
@@ -117,4 +136,53 @@ const addCommentToTask = (taskId,commentModel, callback) => {
   );
 };
 
-export { addTask, getAllTask, assignTaskToMe, assignTaskToUser, getTask, addCommentToTask }
+const changeStatus = (taskId, status, callback) => {
+  const body = {
+    status,
+  };
+  axiosInstance
+    .put(url + "/" + taskId, body)
+    .then(response=> {
+      console.log(response);
+    })
+    .catch(err => {
+      sendError(err,callback)
+    });
+};
+
+const changeDueDate = (taskId, dueDate, callback) => {
+  const body = {
+    dueDate,
+  };
+  axiosInstance
+    .put(url + "/update/" + taskId, body)
+    .then(response=> {
+      console.log(response);
+    })
+    .catch(err => {
+      sendError(err,callback)
+    });
+};
+
+
+const sendError = (err, callback) => {
+  if (err.response.status === 400)
+    callback(false, "Invalid request, Please check status id & status");
+  else if (err.response.status === 401)
+    callback(false, "You are not authorized to perform the operation");
+  else if (err.response.status === 403)
+    callback(false, "You don't have permission to perform the operation");
+  else callback(false, "Internal Error");
+};
+
+export {
+  addTask,
+  editTask,
+  getAllTask,
+  assignTaskToMe,
+  assignTaskToUser,
+  getTask,
+  addCommentToTask,
+  changeStatus,
+  changeDueDate
+};
