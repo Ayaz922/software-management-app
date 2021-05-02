@@ -2,7 +2,7 @@ import { Priority } from "./priority";
 import { TaskType } from "./task-type";
 import { TaskStatus } from "./tast-status";
 
-export interface TaskModel  {
+export default interface TaskModel  {
   _id: string | undefined | null,
   title: string,
   projectId: string | undefined,
@@ -16,6 +16,24 @@ export interface TaskModel  {
   taskType: TaskType,
   lables: Array<any>,
   comments: Array<any>,
-  attachments: string | undefined | null,
+  attachments: [] | undefined | null,
 };
-export default TaskModel;
+
+let taskModel:TaskModel={
+  _id:undefined,
+  title:'',
+  projectId:undefined,
+  description:undefined,
+  status:TaskStatus.BACKLOG,
+  creator:undefined,
+  dueDate:undefined,
+  priority:Priority.LOW,
+  assignee:undefined,
+  assignedUser:undefined,
+  taskType:TaskType.USER_STORY,
+  lables:[],
+  comments:[],
+  attachments:undefined
+
+}
+export {taskModel}

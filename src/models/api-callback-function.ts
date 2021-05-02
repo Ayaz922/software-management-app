@@ -1,2 +1,2 @@
-export type apiCallback=(success:boolean,data:object | null,message?:string)=>void
+export type apiCallback=(success:boolean,data:any | null,message?:string)=>void
 

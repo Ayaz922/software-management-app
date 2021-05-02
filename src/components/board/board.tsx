@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Grid, GridColumn } from "semantic-ui-react";
 import { getAllTask } from "../../api/task-api";
+import { apiCallback } from "../../models/api-callback-function";
+import TaskModel from "../../models/task-model";
 import { TaskType } from "../../models/task-type";
+import { TaskStatus } from "../../models/tast-status";
 import TaskCard from "../task-list/task-card/task-card";
 
-const Board = () => {
-  const [originalData, setOriginalData] = useState([]);
-  const [filteredList, setFilteredList] = useState([]);
-  const [shouldUpdateData, setShouldUpdateData] = useState(false);
+const Board:React.FC = () => {
+  const [originalData, setOriginalData] = useState<Array<TaskModel>>([]);
+  const [filteredList, setFilteredList] = useState<Array<TaskModel>>([]);
+  const [shouldUpdateData, setShouldUpdateData] = useState<boolean>(false);
 
   //Use effect hook
   useEffect(() => {
@@ -20,7 +23,7 @@ const Board = () => {
   //Functions
 
   //Callback after fetching the data from server
-  const callback = (success, data) => {
+  const callback:apiCallback = (success, data) => {
     if (success) {
       setOriginalData(data);
       setFilteredList(data);
@@ -34,20 +37,18 @@ const Board = () => {
   let backLogCards = [];
   let inProgressCards = [];
   let completeCards = [];
-
-  console.log('TYPE Value: ',TaskType.BUG)
   
   if (filteredList.length > 0) {
     for (const [index, value] of filteredList.entries()) {
-      if (value.status === "BACKLOG")
+      if (value.status === TaskStatus.BACKLOG)
         backLogCards.push(
           <TaskCard key={index} task={value} updateData={dataUpdateCallback} />
         );
-      else if (value.status === "IN_PROGRESS")
+      else if (value.status === TaskStatus.IN_PROGRESS)
         inProgressCards.push(
           <TaskCard key={index} task={value} updateData={dataUpdateCallback} />
         );
-      else if (value.status === "DONE")
+      else if (value.status === TaskStatus.DONE)
         completeCards.push(
           <TaskCard key={index} task={value} updateData={dataUpdateCallback} />
         );

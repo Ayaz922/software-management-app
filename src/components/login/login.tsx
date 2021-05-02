@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, FunctionComponent} from "react";
 import {
   Button,
   Form,
@@ -10,8 +10,11 @@ import {
 } from "semantic-ui-react";
 import { login } from "../../api/login";
 import {setLoggedIn, storeToken} from "../../services/authservice"
+interface PropType{
+  logginCallback:(loggedin:boolean)=>void
+}
+const LoginForm:React.FC<PropType> = (props) => {
 
-const LoginForm = (props) => {
   console.log(props)
 
   const [username, setUsername] = useState("");
@@ -24,7 +27,7 @@ const LoginForm = (props) => {
       return 
     } 
     setLoading(true)
-    login({username,password},(success,message,data)=>{
+    login({username,password},(success,data:any,message)=>{
       if(success){
       if(data.loggedIn){
         setLoggedIn(true)

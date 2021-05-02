@@ -1,15 +1,19 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Form, Button, Modal } from "semantic-ui-react";
-import TaskModel from "../../models/task-model";
 import { addTask } from "../../api/task-api";
 import { getAllTeamMember, getDeveloperList } from "../../user/user-profile";
-import {useHistory} from 'react-router-dom'
-import { labelsOptions, priorityItems, taskStatusOptions } from "../../utils/general_data";
+import { useHistory } from 'react-router-dom'
+import { getPriorityByString, getProjectId, getTaskStatusByString, getTaskType, labelsOptions, priorityItems, taskStatusOptions } from "../../utils/general_data";
+import {taskModel} from '../../models/task-model'
+import { TaskStatus } from "../../models/tast-status";
+import { Priority as TaskPriority } from "../../models/priority";
+import { TaskType } from "../../models/task-type";
+import moment from "moment";
 
 const AddTaskComponent = () => {
   let fileInputRef = {};
 
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<any>({
     title: undefined,
     status: undefined,
     userType: undefined,
@@ -29,7 +33,7 @@ const AddTaskComponent = () => {
     });
   });
 
-  
+
 
   const validate = () => {
     if (title.trim() === "" || !title) {
@@ -49,24 +53,25 @@ const AddTaskComponent = () => {
 
     return true;
   };
-
+  
   const saveTask = () => {
     if (!validate()) return;
-
-    TaskModel.title = title;
-    TaskModel.description = description;
-    TaskModel.status = status;
-    TaskModel.dueDate = dueDate;
-    TaskModel.priority = priority;
-    TaskModel.assignedUser = assignedUser;
-    TaskModel.taskType = taskType;
-    TaskModel.lables = lables;
+    taskModel.title = title;
+    taskModel.description = description;
+    taskModel.status = status;
+    taskModel.dueDate = dueDate;
+    taskModel.priority = priority;
+    taskModel.assignedUser = assignedUser;
+    taskModel.taskType = taskType;
+    taskModel.lables = lables;
+    taskModel.projectId = getProjectId()
     showLoading(true);
-    addTask(TaskModel, (success, message, data) => {
+    addTask(taskModel, (success, data, message) => {
       if (success) {
         showLoading(false);
         showSuccessModal(true);
-        TaskModel._id = data._id;
+        taskModel._id = data._id;
+        console.log(taskModel._id)
         clearForm();
         //Data is saved, show popup & clear form or close
       } else {
@@ -79,24 +84,25 @@ const AddTaskComponent = () => {
   const clearForm = () => {
     setTitle("");
     setDescription("");
-    setStatus("");
-    setDueDate("");
-    setPriority("LOW");
+    setStatus(TaskStatus.BACKLOG);
+    setDueDate(undefined);
+    setPriority(TaskPriority.LOW);
     setAssignedUser("");
-    setTaskType("USER_STORY");
+    setTaskType(TaskType.USER_STORY);
     setLables([]);
   };
 
   //States
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [priority, setPriority] = useState('LOW');
-  const [assignedUser, setAssignedUser] = useState("");
-  const [taskType, setTaskType] = useState('USER_STORY');
-  const [lables, setLables] = useState([]);
-  const [attachments, setAttachments] = useState([]);
+  const [status, setStatus] = useState<TaskStatus>(TaskStatus.BACKLOG);
+  const [dueDate, setDueDate] = useState<Date | undefined>();
+  const [priority, setPriority] = useState<TaskPriority>(TaskPriority.LOW);
+  //TODO: Check for type of assigned user
+  const [assignedUser, setAssignedUser] = useState<any>("");
+  const [taskType, setTaskType] = useState<any>(TaskType.USER_STORY);
+  const [lables, setLables] = useState<any>([]);
+  const [attachments, setAttachments] = useState<any>([]);
 
   return (
     <div>
@@ -108,10 +114,11 @@ const AddTaskComponent = () => {
           { key: "view", content: "View Task" },
           { key: "done", content: "Close", positive: true },
         ]}
-        onActionClick={(e, data) => {
-          console.log(e.target.innerHTML);
-          if (e.target.innerHTML === "View Task" && TaskModel._id) history.push("/task/" + TaskModel._id);
-            showSuccessModal(false);
+        onActionClick={(e:any) => {
+          console.log('Event log',e)
+          console.log(taskModel._id);
+          if (e.target.innerHTML === "View Task" && taskModel._id) history.push("/task/" + taskModel._id);
+          showSuccessModal(false);
         }}
       />
       <Form style={{ padding: "1% 1%" }}>
@@ -134,7 +141,8 @@ const AddTaskComponent = () => {
             placeholder="Select Status"
             value={status}
             onChange={(event, { value }) => {
-              setStatus(value);
+              if (value)
+                setStatus(getTaskStatusByString(value.toString()));
             }}
             width={4}
           />
@@ -147,7 +155,8 @@ const AddTaskComponent = () => {
               value="USER_STORY"
               checked={taskType === "USER_STORY"}
               onChange={(e, { value }) => {
-                setTaskType(value);
+                if (value && typeof (value) === 'string')
+                  setTaskType(getTaskType(value));
               }}
             />
             <Form.Radio
@@ -155,7 +164,8 @@ const AddTaskComponent = () => {
               value="EPIC"
               checked={taskType === "EPIC"}
               onChange={(e, { value }) => {
-                setTaskType(value);
+                if (value && typeof (value) === 'string')
+                  setTaskType(getTaskType(value));
               }}
             />
             <Form.Radio
@@ -163,7 +173,8 @@ const AddTaskComponent = () => {
               value="ISSUE"
               checked={taskType === "ISSUE"}
               onChange={(e, { value }) => {
-                setTaskType(value);
+                if (value && typeof (value) === 'string')
+                  setTaskType(getTaskType(value));
               }}
             />
           </Form.Group>
@@ -177,7 +188,8 @@ const AddTaskComponent = () => {
             value={priority}
             selection
             onChange={(e, { value }) => {
-              setPriority(value);
+              if (value && typeof (value) === 'string')
+                setPriority(getPriorityByString(value));
             }}
             error={errors.priority}
           />
@@ -200,7 +212,7 @@ const AddTaskComponent = () => {
               value={dueDate}
               placeholder="00/00/0000"
               onChange={(e) => {
-                setDueDate(e.target.value);
+                setDueDate(moment(e.target.value).toDate());
               }}
             />
           </Form.Field>

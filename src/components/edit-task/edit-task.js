@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
 import { Form, Button, Modal } from "semantic-ui-react";
-import TaskModel from "../../models/task-model";
 import { editTask, getTask } from "../../api/task-api";
 import { getAllTeamMember, getDeveloperList } from "../../user/user-profile";
 import {useHistory} from 'react-router-dom'
+import {taskModel} from '../../models/task-model'
 import {
   taskStatusOptions,
   priorityItems,
@@ -84,20 +84,20 @@ const EditTaskComponent = (props) => {
 
     return true;
   };
-
+  
   const saveTask = () => {
     if (!validate()) return;
-    TaskModel._id = id
-    TaskModel.title = title;
-    TaskModel.description = description;
-    TaskModel.status = status;
-    TaskModel.dueDate = dueDate;
-    TaskModel.priority = priority;
-    TaskModel.assignedUser = assignedUser;
-    TaskModel.taskType = taskType;
-    TaskModel.lables = lables;
+    taskModel._id = id
+    taskModel.title = title;
+    taskModel.description = description;
+    taskModel.status = status;
+    taskModel.dueDate = dueDate;
+    taskModel.priority = priority;
+    taskModel.assignedUser = assignedUser;
+    taskModel.taskType = taskType;
+    taskModel.lables = lables;
     showLoading(true);
-    editTask(TaskModel, (success, message, data) => {
+    editTask(taskModel, (success, message, data) => {
       if (success) {
         showLoading(false);
         showSuccessModal(true);
