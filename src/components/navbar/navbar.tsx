@@ -3,10 +3,14 @@ import { Menu } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { setLoggedIn, storeToken } from "../../services/authservice";
 
-function Navbar(props) {
+type PropType={
+  logoutCallback:()=>void
+}
+
+function Navbar({logoutCallback}:PropType) {
   const [activeItem, setActiveItem] = useState('');
 
-  const handleItemClick = (e, { name }) => {
+  const handleItemClick = (e:any, { name }:any) => {
     setActiveItem(name);
   };
 
@@ -62,7 +66,7 @@ function Navbar(props) {
               console.log('Logged out')
               setLoggedIn(false)
               storeToken('')
-              props.logoutCallback()
+              logoutCallback()
             }
           }
           >Logout</Menu.Item>

@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Card } from "semantic-ui-react";
 import { assignTaskToMe } from "../../../api/task-api";
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
   getTaskTypeText,
   getColorForPriority,
 } from "../../../utils/utils-functions";
+import TaskModel from "../../../models/task-model";
 
-const TaskCard = (props) => {
-  const [taskModel, updateTaskModel] = useState(props.task);
+type PropType = {
+  task: TaskModel,
+  updateData: () => void
+}
 
-  const enableAssignMe = (taskModel) => {
+const TaskCard = ({ task, updateData }: PropType) => {
+  const [taskModel, updateTaskModel] = useState(task);
+
+  const enableAssignMe = (taskModel: TaskModel) => {
     if (!taskModel.assignedUser) {
       return (
         <span
@@ -24,17 +30,19 @@ const TaskCard = (props) => {
     return;
   };
 
-  const handleAssignMe = (taskModel) => {
-    assignTaskToMe(taskModel, (success, message, data) => {
-      updateTaskModel(data);
-      props.updateData();
+  const handleAssignMe = (taskModel: TaskModel) => {
+    assignTaskToMe(taskModel, (success, data) => {
+      if (success) {
+        updateTaskModel(data);
+        updateData();
+      }
     });
   };
 
   //Use effect to listen to any changes from the parent
   useEffect(() => {
-    updateTaskModel(props.task);
-  }, [props]);
+    updateTaskModel(task);
+  }, [task]);
 
   return (
     <Card fluid size="mini" >
@@ -58,8 +66,8 @@ const TaskCard = (props) => {
         </span>
 
         <Card.Header style={{ fontSize: "14px" }}>
-          <Link style={{ padding: "0px 10px 0px 0px" }} to={"/task/"+taskModel._id} >
-            #{taskModel._id.substring(20, 24)}
+          <Link style={{ padding: "0px 10px 0px 0px" }} to={"/task/" + taskModel._id} >
+            #{taskModel._id?taskModel._id.substring(20, 24):'No id'}
           </Link>
           {taskModel.title}
         </Card.Header>

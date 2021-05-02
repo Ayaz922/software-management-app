@@ -1,25 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { Checkbox, Form } from "semantic-ui-react";
+import { priorityItems, taskStatusOptions, taskTypeOptions } from "../../utils/general_data";
 
-const CustomFilter = (props) => {
+type PropType={
+  onItemClicked:(filterItem:FilterType)=>void
+}
+
+type FilterType={
+  type:string,
+  value:string | undefined | boolean
+}
+
+
+const CustomFilter = ({onItemClicked}:PropType) => {
 
   const [showOnlyMyTasks, setMyTasks] = useState(false)
 
   useEffect(() => {
     console.log("Console: UseEffect "+showOnlyMyTasks)
    
-  }, [props.data, showOnlyMyTasks]);
+  }, [showOnlyMyTasks]);
 
-  const handleItemClick = (e, { type, value }) => {
-    console.log("Value: " + e.currentTarget.value + " Type: " + type);
-    props.onItemClicked({
+  const handleItemClick = (e:any, { type, value }:FilterType) => {
+    onItemClicked({
         type,
         value
     })
   };
 
   const toggleMyTasks = ()=>{
-    props.onItemClicked({
+    onItemClicked({
       "type":"mytask",
       "value":!showOnlyMyTasks
     })
@@ -27,21 +37,9 @@ const CustomFilter = (props) => {
   }
 
   const filterDropdown = {
-    type: [
-      { key: 1, text: "User Story", value: "USER_STORY" },
-      { key: 2, text: "Issue/Bug", value: "ISSUE" },
-      { key: 3, text: "Epic", value: "EPIC" },
-    ],
-    status: [
-      { key: 1, text: "Backlog", value: "BACKLOG" },
-      { key: 2, text: "In Progress", value: "IN_PROGRESS" },
-      { key: 3, text: "Done", value: "DONE" },
-    ],
-    priority: [
-      { key: 1, text: "Low", value: "LOW" },
-      { key: 2, text: "Medium", value: "MEDIUM" },
-      { key: 3, text: "High", value: "HIGH" },
-    ],
+    type: taskTypeOptions,
+    status: taskStatusOptions,
+    priority: priorityItems,
     assignee: [],
     sprint: [],
     pi: [],
@@ -64,6 +62,7 @@ const CustomFilter = (props) => {
           clearable
           options={filterDropdown.type}
           selection
+          //@ts-ignore
           onChange={handleItemClick}
         />
         <Form.Dropdown
@@ -73,6 +72,7 @@ const CustomFilter = (props) => {
           clearable
           options={filterDropdown.status}
           selection
+          //@ts-ignore
           onChange={handleItemClick}
         />
         <Form.Dropdown
@@ -82,6 +82,7 @@ const CustomFilter = (props) => {
           clearable
           options={filterDropdown.priority}
           selection
+          //@ts-ignore
           onChange={handleItemClick}
         />
         <Form.Dropdown
@@ -91,6 +92,7 @@ const CustomFilter = (props) => {
           clearable
           options={filterDropdown.assignee}
           selection
+          //@ts-ignore
           onChange={handleItemClick}
         />
         <Form.Dropdown
@@ -100,6 +102,7 @@ const CustomFilter = (props) => {
           clearable
           options={filterDropdown.sprint}
           selection
+          //@ts-ignore
           onChange={handleItemClick}
         />
         <Form.Dropdown
@@ -109,6 +112,7 @@ const CustomFilter = (props) => {
           clearable
           options={filterDropdown.dueDate}
           selection
+          //@ts-ignore
           onChange={handleItemClick}
         />
       </Form>

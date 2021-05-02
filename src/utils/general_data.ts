@@ -14,22 +14,15 @@ const taskStatusOptions = [
   { key: "CANCELLED", text: "Cancelled", value: "CANCELLED" },
 ];
 
-const priorityItems = [
-  {
-    key: "Low",
-    text: "Low",
-    value: "LOW",
-  },
-  {
-    key: "medium",
-    text: "Medium",
-    value: "Medium",
-  },
-  {
-    key: "high",
-    text: "High",
-    value: "HIGH",
-  },
+const priorityItemOptions = [
+  { key: "Low", text: "Low", value: "LOW" },
+  { key: "medium", text: "Medium", value: "Medium" },
+  { key: "high", text: "High", value: "HIGH" },
+];
+const taskTypeOptions = [
+  { key: TaskType.USER_STORY, text: "User story", value: TaskType.USER_STORY },
+  { key: TaskType.EPIC, text: "Epic", value: TaskType.EPIC },
+  { key: TaskType.BUG, text: "Issue/bug", value: TaskType.BUG },
 ];
 
 const labelsOptions = [
@@ -123,17 +116,20 @@ const getPriorityByString = (priority: string): Priority => {
   }
 };
 
-const getProjectId=()=>{
-  return 'Project01'
-}
+const getProjectId = () => {
+  return "Project01";
+};
 
 export {
+  //Dropdownoptions
   taskStatusOptions,
-  getTextForTaskTypeId,
   labelsOptions,
-  priorityItems,
+  priorityItemOptions as priorityItems,
+  taskTypeOptions,
+  //Functions
+  getTextForTaskTypeId,
   getTaskStatusByString,
   getTaskType,
   getPriorityByString,
-  getProjectId
+  getProjectId,
 };

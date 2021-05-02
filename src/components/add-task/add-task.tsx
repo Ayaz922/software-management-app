@@ -152,8 +152,8 @@ const AddTaskComponent = () => {
             <label>Type: </label>
             <Form.Radio
               label="User Story"
-              value="USER_STORY"
-              checked={taskType === "USER_STORY"}
+              value={TaskType.USER_STORY}
+              checked={taskType === TaskType.USER_STORY}
               onChange={(e, { value }) => {
                 if (value && typeof (value) === 'string')
                   setTaskType(getTaskType(value));
@@ -161,8 +161,8 @@ const AddTaskComponent = () => {
             />
             <Form.Radio
               label="Epic"
-              value="EPIC"
-              checked={taskType === "EPIC"}
+              value={TaskType.EPIC}
+              checked={taskType === TaskType.EPIC}
               onChange={(e, { value }) => {
                 if (value && typeof (value) === 'string')
                   setTaskType(getTaskType(value));
@@ -170,8 +170,8 @@ const AddTaskComponent = () => {
             />
             <Form.Radio
               label="Issue/Bug"
-              value="ISSUE"
-              checked={taskType === "ISSUE"}
+              value={TaskType.BUG}
+              checked={taskType === TaskType.BUG}
               onChange={(e, { value }) => {
                 if (value && typeof (value) === 'string')
                   setTaskType(getTaskType(value));

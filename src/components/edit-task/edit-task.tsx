@@ -1,25 +1,31 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import moment from "moment";
 import { Form, Button, Modal } from "semantic-ui-react";
 import { editTask, getTask } from "../../api/task-api";
 import { getAllTeamMember, getDeveloperList } from "../../user/user-profile";
-import {useHistory} from 'react-router-dom'
-import {taskModel} from '../../models/task-model'
+import { useHistory } from 'react-router-dom'
+import TaskModel, { taskModel } from '../../models/task-model'
 import {
   taskStatusOptions,
   priorityItems,
   labelsOptions,
+  getTaskStatusByString,
+  getTaskType as getTaskTypeByString,
+  getPriorityByString,
 } from "../../utils/general_data";
+import { TaskStatus } from "../../models/tast-status";
+import { Priority } from "../../models/priority";
+import { TaskType } from "../../models/task-type";
 
-const EditTaskComponent = (props) => {
+const EditTaskComponent = () => {
   const id = window.location.href.substring(
     window.location.href.lastIndexOf("/") + 1
   );
 
-  const callback = (success, response) => {
+  const callback = (success: boolean, response: any) => {
     console.log(response);
     if (success) {
-      console.log('Response Recieved',response);
+      console.log('Response Recieved', response);
       setTask(response);
       setValues(response);
     } else alert(response);
@@ -30,8 +36,8 @@ const EditTaskComponent = (props) => {
   }, [id]);
 
 
-  const setValues = (task) => {
-    console.log('Setting up values',task)
+  const setValues = (task: TaskModel) => {
+    console.log('Setting up values', task)
     setStatus(task.status);
     task.dueDate
       ? setDueDate(moment(task.dueDate).toDate())
@@ -46,7 +52,7 @@ const EditTaskComponent = (props) => {
   };
 
   let fileInputRef = {};
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<any>({
     title: undefined,
     status: undefined,
     userType: undefined,
@@ -84,7 +90,7 @@ const EditTaskComponent = (props) => {
 
     return true;
   };
-  
+
   const saveTask = () => {
     if (!validate()) return;
     taskModel._id = id
@@ -109,29 +115,18 @@ const EditTaskComponent = (props) => {
     });
   };
 
-  const clearForm = () => {
-    setTitle("");
-    setDescription("");
-    setStatus("");
-    setDueDate("");
-    setPriority("");
-    setAssignedUser("");
-    setTaskType("USER_STORY");
-    setLables([]);
-  };
-
   //States
-  const [task, setTask] = useState({});
+  const [task, setTask] = useState<TaskModel>();
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [priority, setPriority] = useState("");
-  const [assignedUser, setAssignedUser] = useState("");
-  const [taskType, setTaskType] = useState("USER_STORY");
-  const [lables, setLables] = useState([]);
+  const [description, setDescription] = useState<string>();
+  const [status, setStatus] = useState<TaskStatus>(TaskStatus.BACKLOG);
+  const [dueDate, setDueDate] = useState<Date>();
+  const [priority, setPriority] = useState<Priority>(Priority.LOW);
+  const [assignedUser, setAssignedUser] = useState<string>();
+  const [taskType, setTaskType] = useState<TaskType>(TaskType.USER_STORY);
+  const [lables, setLables] = useState<Array<string>>([]);
   const [attachments, setAttachments] = useState([]);
-  
+
   return (
     <div>
       <Modal
@@ -142,12 +137,12 @@ const EditTaskComponent = (props) => {
           { key: "view", content: "View Task" },
           { key: "done", content: "Close", positive: true },
         ]}
-        onActionClick={(e, data) => {
+        onActionClick={(e: any, data) => {
           console.log(e.target.innerHTML)
           console.log(data)
-          if(e.target.innerHTML === 'View Task'){
+          if (e.target.innerHTML === 'View Task') {
             console.log('Opening task')
-            history.push('/task/'+id)
+            history.push('/task/' + id)
           }
 
           showSuccessModal(false);
@@ -173,7 +168,8 @@ const EditTaskComponent = (props) => {
             placeholder="Select Status"
             value={status}
             onChange={(event, { value }) => {
-              setStatus(value);
+              if (typeof value === 'string')
+                setStatus(getTaskStatusByString(value));
             }}
             width={4}
           />
@@ -183,26 +179,29 @@ const EditTaskComponent = (props) => {
             <label>Type: </label>
             <Form.Radio
               label="User Story"
-              value="USER_STORY"
-              checked={taskType === "USER_STORY"}
+              value={TaskType.USER_STORY}
+              checked={taskType === TaskType.USER_STORY}
               onChange={(e, { value }) => {
-                setTaskType(value);
+                if (typeof value === 'string')
+                  setTaskType(getTaskTypeByString(value));
               }}
             />
             <Form.Radio
               label="Epic"
-              value="EPIC"
-              checked={taskType === "EPIC"}
+              value={TaskType.EPIC}
+              checked={taskType === TaskType.EPIC}
               onChange={(e, { value }) => {
-                setTaskType(value);
+                if (typeof value === 'string')
+                  setTaskType(getTaskTypeByString(value));
               }}
             />
             <Form.Radio
               label="Issue/Bug"
-              value="ISSUE"
-              checked={taskType === "ISSUE"}
+              value={TaskType.BUG}
+              checked={taskType === TaskType.BUG}
               onChange={(e, { value }) => {
-                setTaskType(value);
+                if (typeof value === 'string')
+                  setTaskType(getTaskTypeByString(value));
               }}
             />
           </Form.Group>
@@ -216,7 +215,8 @@ const EditTaskComponent = (props) => {
             value={priority}
             selection
             onChange={(e, { value }) => {
-              setPriority(value);
+              if (typeof value === 'string')
+                setPriority(getPriorityByString(value));
             }}
             error={errors.priority}
           />
@@ -228,7 +228,8 @@ const EditTaskComponent = (props) => {
             value={assignedUser}
             options={getAllTeamMember()}
             onChange={(e, { value }) => {
-              setAssignedUser(value);
+              if (typeof value === 'string')
+                setAssignedUser(value);
             }}
           />
 
@@ -237,7 +238,8 @@ const EditTaskComponent = (props) => {
             <Form.Input
               type="Date"
               value={moment(dueDate).format('yyyy-MM-DD')}
-              onChange={(e) => {
+              onChange={(e: any) => {
+
                 setDueDate(e.target.value);
               }}
             />
@@ -254,7 +256,7 @@ const EditTaskComponent = (props) => {
           options={labelsOptions}
           value={lables}
           onChange={(e, { text, value }) => {
-            console.log(value);
+            //@ts-ignore
             setLables(value);
           }}
         />
@@ -274,6 +276,7 @@ const EditTaskComponent = (props) => {
           <Form.Button
             icon="upload"
             onClick={() => {
+              //@ts-ignore
               attachments.push(fileInputRef);
               setAttachments(attachments);
             }}

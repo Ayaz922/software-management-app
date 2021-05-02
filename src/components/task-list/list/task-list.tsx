@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   CardGroup,
   Grid,
@@ -6,23 +6,29 @@ import {
   Message,
 } from "semantic-ui-react";
 import { getAllTask } from "../../../api/task-api";
+import { apiCallback } from "../../../models/api-callback-function";
+import TaskModel from "../../../models/task-model";
 import { getCurrentUser } from "../../../user/user-profile";
 import CustomFilter from "../../filter/filter";
 import TaskCard from "../task-card/task-card";
 
 const TaskList = () => {
-  const [originalData, setOriginalData] = useState([]);
-  const [filteredList, setFilteredList] = useState([]);
+  const [originalData, setOriginalData] = useState<Array<TaskModel>>([]);
+  const [filteredList, setFilteredList] = useState<Array<TaskModel>>([]);
   const [shouldUpdateData, setShouldUpdateData] = useState(false);
-  const [filterArray, setFilterArray] = useState({
-    type: undefined,
-    status: undefined,
-    priority: undefined,
-    user: undefined,
-    assignee: undefined,
-    sprint: undefined,
-    mytask: false,
-  });
+  const [filterArray, setFilterArray] = useState<any>({});
+
+  type FilterOptions = {
+    type: undefined | string,
+    status: undefined | string,
+    priority: undefined | string,
+    user: undefined | string,
+    assignee: undefined | string,
+    sprint: undefined | string,
+    mytask: boolean,
+  }
+
+
   //Use effect hook
   useEffect(() => {
     if (originalData.length === 0 || shouldUpdateData) {
@@ -35,7 +41,7 @@ const TaskList = () => {
   //Functions
 
   //Callback after fetching the data from server
-  const callback = (success, data) => {
+  const callback:apiCallback = (success, data) => {
     if (success) {
       setOriginalData(data);
       setFilteredList(data);
@@ -43,9 +49,13 @@ const TaskList = () => {
       console.log("ERROR WHILE FETCHING THE DATA: " + data);
     }
   };
-
+  
+  type FilterItem ={
+    type:string,
+    value:undefined | string | boolean
+  }
   //Callback for item clicked in dropdown
-  const onDropdownItemClicked = (item) => {
+  const onDropdownItemClicked = (item:FilterItem) => {
     let tempArray = filterArray;
     tempArray[item.type] = item.value;
     setFilterArray(tempArray);
@@ -60,7 +70,7 @@ const TaskList = () => {
     setFilteredList(listAfterFilter);
   };
 
-  const getFilteredArray = (key, currentTaskList) => {
+  const getFilteredArray = (key:string, currentTaskList:Array<TaskModel>) => {
     let newArray = [];
     console.log(key);
     if (filterArray[key] === "" || !filterArray[key]) return currentTaskList;

@@ -11,7 +11,6 @@ import EditTaskComponent from "../edit-task/edit-task";
 import DetailedTaskComponent from "../detailed-task/detailed-task";
 
 function Home() {
-  const context = createRef();
 
   const [isAutheticated,setIsAuthenticated] = useState(true)
 
@@ -22,9 +21,12 @@ function Home() {
     <>
       
         <Router>
-          <div className="wrapper" ref={context}>
+          <div className="wrapper">
             {/* <Sticky context = {context} className="navbar"> */}
-            <Navbar className="navbar" logoutCallback={()=>{setIsAuthenticated(false)}}/>
+            <Navbar 
+            //@ts-ignore
+            className="navbar" 
+            logoutCallback={()=>{setIsAuthenticated(false)}}/>
             {/* </Sticky> */}
             <div className="emptySpace"></div>
             <div className="content">
@@ -39,7 +41,7 @@ function Home() {
                 <Route path="/" exact component={LandingScreen} />
               </Switch>
                ) : (
-                <LoginForm x="4" logginCallback={(value)=>{
+                <LoginForm logginCallback={(value)=>{
                   setIsAuthenticated(value)
                 }}/>
               )}
