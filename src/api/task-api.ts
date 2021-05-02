@@ -2,7 +2,7 @@ import axiosInstance from "./axios";
 import { getCurrentUser } from "../user/user-profile";
 import TaskModel from "../models/task-model";
 import { apiCallback } from "../models/api-callback-function";
-import { commentModel } from "../models/comment-model";
+import CommentModel from "../models/comment-model";
 import { TaskStatus } from "../models/tast-status";
 const url = "/task";
 
@@ -122,7 +122,7 @@ const assignTaskToUser = (
   );
 };
 
-const addCommentToTask = (taskId: string, commentModel: commentModel, callback: apiCallback) => {
+const addCommentToTask = (taskId: string, commentModel: CommentModel[], callback: apiCallback) => {
   const body = {
     comments: commentModel,
   };

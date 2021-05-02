@@ -13,19 +13,25 @@ import {
   getCurrentUser,
   getUserNameFromUsername,
 } from "../../user/user-profile";
+import CommentModel from '../../models/comment-model'
+type PropType = {
+  taskId:string,
+  forceReload:(reload:true)=>any,
+  comments: Array<CommentModel>
+}
 
-const CommentComponent = (props) => {
-  const [comments, setComments] = useState(props.comments);
-  const [commentMessage, setCommentMessage] = useState();
+const CommentComponent = (props: PropType) => {
+  const [comments, setComments] = useState<Array<CommentModel>>(props.comments);
+  const [commentMessage, setCommentMessage] = useState('');
 
   const addComment = () => {
     if (!commentMessage) return alert("Please enter commment");
 
-    let commentModel = {};
-    commentModel.author = getCurrentUser();
-    commentModel.date = new Date();
-    commentModel.message = commentMessage;
-
+    let commentModel: CommentModel = {
+      author : getCurrentUser(),
+      date : new Date(),
+      message : commentMessage,
+    };
     let updateComments = comments;
     updateComments.push(commentModel);
     setComments(updateComments);
@@ -42,7 +48,7 @@ const CommentComponent = (props) => {
     setComments(props.comments);
   }, [comments, props.comments]);
 
-  const commentsComponents = [];
+  const commentsComponents:any = [];
   if (comments && comments.length > 0 && comments[0].message) {
     comments.forEach((comment) => {
       commentsComponents.push(
@@ -73,7 +79,7 @@ const CommentComponent = (props) => {
         <Input
           rows={2}
           fluid
-          style={{height:"40px"}}
+          style={{ height: "40px" }}
           placeholder="Write your comment"
           value={commentMessage}
           onChange={(event) => {

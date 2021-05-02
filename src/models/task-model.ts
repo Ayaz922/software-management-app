@@ -11,12 +11,14 @@ export default interface TaskModel  {
   creator: string | undefined,
   dueDate: undefined | Date | null,
   priority: Priority,
-  assignee: string | undefined,
   assignedUser: string | undefined,
+  assignedBy: string | undefined,
   taskType: TaskType,
   lables: Array<any>,
   comments: Array<any>,
   attachments: [] | undefined | null,
+  createdBy?:string,
+  createdAt?:Date | string
 };
 
 let taskModel:TaskModel={
@@ -28,8 +30,8 @@ let taskModel:TaskModel={
   creator:undefined,
   dueDate:undefined,
   priority:Priority.LOW,
-  assignee:undefined,
   assignedUser:undefined,
+  assignedBy:undefined,
   taskType:TaskType.USER_STORY,
   lables:[],
   comments:[],
