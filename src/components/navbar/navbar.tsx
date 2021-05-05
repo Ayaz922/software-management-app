@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Menu } from "semantic-ui-react";
+import { Button, Icon, Menu } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { setLoggedIn, storeToken } from "../../services/authservice";
 
-type PropType={
-  logoutCallback:()=>void
+type PropType = {
+  logoutCallback: () => void
 }
 
-function Navbar({logoutCallback}:PropType) {
+function Navbar({ logoutCallback }: PropType) {
   const [activeItem, setActiveItem] = useState('');
 
-  const handleItemClick = (e:any, { name }:any) => {
+  const handleItemClick = (e: any, { name }: any) => {
     setActiveItem(name);
   };
 
@@ -21,12 +21,12 @@ function Navbar({logoutCallback}:PropType) {
     else if (currentURL.includes("add-task")) setActiveItem("Add Task");
     else if (currentURL.includes("project")) setActiveItem("Projects");
     else setActiveItem("home");
-    console.log('Active item '+activeItem)
+    console.log('Active item ' + activeItem)
   }, [activeItem]);
 
   return (
     <div style={{ position: "absolute" }}>
-      <Menu style={{ background: "white" }} pointing secondary fixed="top">
+      <Menu size='mini' style={{ background: "white" }} pointing secondary fixed="top">
         <Menu.Item
           as={Link}
           to="/"
@@ -60,16 +60,25 @@ function Navbar({logoutCallback}:PropType) {
         />
 
         <Menu.Menu position="right">
-          <Menu.Item
-          onClick ={
-            ()=>{
-              console.log('Logged out')
-              setLoggedIn(false)
-              storeToken('')
-              logoutCallback()
-            }
-          }
-          >Logout</Menu.Item>
+          <Menu.Item as={Button} size="tiny">
+            <Button
+              size='tiny'
+              primary
+              basic
+              icon='add'
+              content='Create'
+              onClick={()=>{alert('Not implemented yet')}}
+            />
+          </Menu.Item>
+          <Menu.Item as={Button} size="tiny">
+            <Button
+              size='tiny'
+              basic
+              icon='ellipsis vertical'
+              color='black'
+              onClick={()=>{alert('Not implemented yet')}}
+            />
+          </Menu.Item>
         </Menu.Menu>
       </Menu>
     </div>

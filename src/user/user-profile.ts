@@ -38,4 +38,12 @@ const getUserNameFromUsername = (username:string)=>{
     return name;
 }
 
-export {getCurrentUser, getDeveloperList, getAllTeamMember, getUserNameFromUsername}
+const getAllProjectManagers = ()=>{
+    const pms=[
+        {key:'pm1',text:'Jon Doe',value:'pm@airbus.com'},
+        {key:'pm2',text:'Davis',value:'pm1@airbus.com'}
+    ]
+    return pms;
+}
+
+export {getCurrentUser, getDeveloperList, getAllTeamMember, getUserNameFromUsername, getAllProjectManagers}

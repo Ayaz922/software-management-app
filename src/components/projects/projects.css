@@ -1,0 +1,38 @@
+.project-list-item{
+    height: 50px;
+    vertical-align: center;
+    width: 100%;
+    position:relative;
+    
+}
+.project-list-item:hover{
+    background-color: ghostwhite;
+    color: black;
+}
+.item-text{
+    position:absolute;
+    top:35%;
+    left: 5%;
+    
+}
+
+.top-container{
+    margin: 0px 4px 4px 0px;
+}
+
+.item{
+    background: 0 0;
+    padding: 0px;
+    margin: 4px 0px 0px 0px;
+    font-size: 1.2em;
+    color: rgba(0,0,0,.5);
+}
+
+.ui.vertical.menu .item .menu .active.item {
+    background-color: #d7dadd;
+    font-weight: 500;
+    color:#055aaf;
+}
+.ui.vertical.menu .item .menu .active.item:hover {
+    color:#055aaf;
+}
