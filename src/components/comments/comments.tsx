@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Button,
   Comment,
@@ -6,7 +6,6 @@ import {
   Form,
   Header,
   Input,
-  TextArea,
 } from "semantic-ui-react";
 import { addCommentToTask } from "../../api/task-api";
 import {

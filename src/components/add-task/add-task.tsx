@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Button, Modal } from "semantic-ui-react";
 import { addTask } from "../../api/task-api";
 import { getAllTeamMember, getDeveloperList } from "../../user/user-profile";
 import { useHistory } from 'react-router-dom'
 import { getPriorityByString, getProjectId, getTaskStatusByString, getTaskType, labelsOptions, priorityItems, taskStatusOptions } from "../../utils/general_data";
-import {taskModel} from '../../models/task-model'
+import { taskModel } from '../../models/task-model'
 import { TaskStatus } from "../../models/tast-status";
 import { Priority as TaskPriority } from "../../models/priority";
 import { TaskType } from "../../models/task-type";
 import moment from "moment";
+import useLocalStorage, { CURRENT_PROJECT } from "../../utils/localstorage/localStorage";
 
 const AddTaskComponent = () => {
   let fileInputRef = {};
@@ -23,15 +24,26 @@ const AddTaskComponent = () => {
   const [successModalVisible, showSuccessModal] = useState(false);
   const [loading, showLoading] = useState(false);
   const history = useHistory()
+  const [projectId] = useLocalStorage(CURRENT_PROJECT)
 
-  const allTeams = [];
-  getDeveloperList().forEach((developer) => {
-    allTeams.push({
-      key: developer.email,
-      text: developer.name,
-      value: developer.name,
-    });
-  });
+  const allTeams: any = [];
+  
+  const countryOptions = [
+    { key: 'af', value: 'af',  text: 'Afghanistan' },
+    { key: '608187d2b4337e460485ce7', value: "dev",  text: 'Mr. DEVELOPER' }
+  ]
+  getDeveloperList((success, data) => {
+    if (success) {
+      data.forEach((developer: any) => {
+        countryOptions.push({
+          key: 'a',
+          value: 'Ayaz',
+          text: 'Ayaz Alam',
+        });
+      });
+    } else alert("Couldn't load developer list")
+  })
+
 
 
 
@@ -53,7 +65,7 @@ const AddTaskComponent = () => {
 
     return true;
   };
-  
+
   const saveTask = () => {
     if (!validate()) return;
     taskModel.title = title;
@@ -64,18 +76,19 @@ const AddTaskComponent = () => {
     taskModel.assignedUser = assignedUser;
     taskModel.taskType = taskType;
     taskModel.lables = lables;
-    taskModel.projectId = getProjectId()
+    taskModel.projectId = projectId;
     showLoading(true);
+    console.log(taskModel)
     addTask(taskModel, (success, data, message) => {
       if (success) {
         showLoading(false);
         showSuccessModal(true);
         taskModel._id = data._id;
-        console.log(taskModel._id)
         clearForm();
         //Data is saved, show popup & clear form or close
       } else {
         showLoading(false);
+        console.log(message,data)
         //Could'nt save data show error pop, don't clear
       }
     });
@@ -104,6 +117,10 @@ const AddTaskComponent = () => {
   const [lables, setLables] = useState<any>([]);
   const [attachments, setAttachments] = useState<any>([]);
 
+  useEffect(() => { }, [assignedUser])
+
+
+
   return (
     <div>
       <Modal
@@ -114,9 +131,7 @@ const AddTaskComponent = () => {
           { key: "view", content: "View Task" },
           { key: "done", content: "Close", positive: true },
         ]}
-        onActionClick={(e:any) => {
-          console.log('Event log',e)
-          console.log(taskModel._id);
+        onActionClick={(e: any) => {
           if (e.target.innerHTML === "View Task" && taskModel._id) history.push("/task/" + taskModel._id);
           showSuccessModal(false);
         }}
@@ -187,20 +202,20 @@ const AddTaskComponent = () => {
             options={priorityItems}
             value={priority}
             selection
-            onChange={(e, { value }) => {
-              if (value && typeof (value) === 'string')
-                setPriority(getPriorityByString(value));
+            onChange={(e, { value }: any) => {
+              setPriority(value);
             }}
             error={errors.priority}
           />
-          <Form.Dropdown
+          <Form.Select
             label="Assign Developer"
             placeholder="Select Developer"
             selection
             clearable
             value={assignedUser}
-            options={getAllTeamMember()}
-            onChange={(e, { value }) => {
+            //text={countryOptions.find(item=>{return item.key === assignedUser})?.text}
+            options={countryOptions}
+            onChange={(e, { value,key,text }) => {
               setAssignedUser(value);
             }}
           />
@@ -228,7 +243,6 @@ const AddTaskComponent = () => {
           options={labelsOptions}
           value={lables}
           onChange={(e, { text, value }) => {
-            console.log(text);
             setLables(value);
           }}
         />

@@ -16,17 +16,17 @@ import {
 import { TaskStatus } from "../../models/tast-status";
 import { Priority } from "../../models/priority";
 import { TaskType } from "../../models/task-type";
+import { apiCallback } from "../../models/api-callback-function";
 
 const EditTaskComponent = () => {
   const id = window.location.href.substring(
     window.location.href.lastIndexOf("/") + 1
   );
 
-  const callback = (success: boolean, response: any) => {
+  const callback: apiCallback = (success: boolean, response: any) => {
     console.log(response);
     if (success) {
       console.log('Response Recieved', response);
-      setTask(response);
       setValues(response);
     } else alert(response);
   };
@@ -64,13 +64,19 @@ const EditTaskComponent = () => {
   const history = useHistory()
 
   const allTeams = [];
-  getDeveloperList().forEach((developer) => {
-    allTeams.push({
-      key: developer.email,
-      text: developer.name,
-      value: developer.name,
+  getDeveloperList((success, data) => {
+    if(success){
+    data.forEach((developer: any) => {
+      allTeams.push({
+        key: developer.username,
+        text: developer.name,
+        value: developer.name,
+      });
     });
-  });
+  }else {
+    alert("Coudn't  load developer list")
+  }
+  })
 
   const validate = () => {
     if (title.trim() === "" || !title) {
@@ -116,7 +122,6 @@ const EditTaskComponent = () => {
   };
 
   //States
-  const [task, setTask] = useState<TaskModel>();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState<string>();
   const [status, setStatus] = useState<TaskStatus>(TaskStatus.BACKLOG);

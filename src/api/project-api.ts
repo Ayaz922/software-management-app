@@ -1,7 +1,9 @@
-import axiosInstance from "./axios";
+import getAxiosInstance from "./axios";
 import { apiCallback } from "../models/api-callback-function";
 import ProjectModel from "../models/project-model";
 const url = "/project";
+
+const axiosInstance = getAxiosInstance()
 
 const addProjectToDatabase = (projectModel: ProjectModel, callback: apiCallback) => {
   axiosInstance.post(url, projectModel).then(
@@ -22,6 +24,7 @@ const addProjectToDatabase = (projectModel: ProjectModel, callback: apiCallback)
 };
 
 const getAllProjectFromDatabase = (callback: apiCallback) => {
+    
     axiosInstance.get(url).then(
       (response) => {
         if (response.status === 200) {

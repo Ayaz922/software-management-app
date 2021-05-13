@@ -1,3 +1,9 @@
+import { getAllTeam, getTeamMemberByType } from "../api/user-api";
+import { apiCallback } from "../models/api-callback-function";
+import UserType from "../models/user-type";
+import { CURRENT_USER } from "../utils/localstorage/localStorage"
+import { getCurrentProject } from "../utils/projectHelper";
+
 const devs = [
     { key: 1, text: "Jon Doe(Admin)", value: "ayaz@airbus.com" },
     { key: 2, text: "Jon Doe(PM)", value: "pm@airbus.com" },
@@ -7,25 +13,17 @@ const devs = [
 
 
 const getCurrentUser = () => {
-    return  "dev@airbus.com"
+    let currentUser = localStorage.getItem(CURRENT_USER)
+    currentUser = currentUser?currentUser:"";
+    return  JSON.parse(currentUser);
 }
 
-const getDeveloperList = ()=>{
-    return [
-        {name:"Ayaz Alam",email:"ayazalam@email.com"},
-        {name:"Jon Doe",email:"jondoe@email.com"},
-        {name:"Kanika Ranka",email:"kanikaranka@email.com"},
-        {name:"John",email:"John@email.com"},
-        {name:"Sesame",email:"sesame@email.com"},
-        {name:"Marry",email:"marry@email.com"},
-        {name:"Penny",email:"penny@email.com"},
-        {name:"George",email:"george@email.com"},
-    ]
+const getDeveloperList = (callback:apiCallback)=>{
+    getTeamMemberByType(getCurrentProject(),UserType.DEVELOPER,callback)
 }
 
 const getAllTeamMember = ()=>{
-  
-    return devs
+    return devs;
 }
 
 const getUserNameFromUsername = (username:string)=>{

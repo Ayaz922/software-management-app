@@ -3,22 +3,23 @@ import { Grid, GridColumn } from "semantic-ui-react";
 import { getAllTask } from "../../api/task-api";
 import { apiCallback } from "../../models/api-callback-function";
 import TaskModel from "../../models/task-model";
-import { TaskType } from "../../models/task-type";
 import { TaskStatus } from "../../models/tast-status";
+import useLocalStorage, { CURRENT_PROJECT } from "../../utils/localstorage/localStorage";
 import TaskCard from "../task-list/task-card/task-card";
 
 const Board:React.FC = () => {
   const [originalData, setOriginalData] = useState<Array<TaskModel>>([]);
   const [filteredList, setFilteredList] = useState<Array<TaskModel>>([]);
   const [shouldUpdateData, setShouldUpdateData] = useState<boolean>(false);
+  const [projectId] = useLocalStorage(CURRENT_PROJECT);
 
   //Use effect hook
   useEffect(() => {
     if (originalData.length === 0 || shouldUpdateData) {
-      getAllTask(callback);
+      getAllTask(projectId,callback);
       setShouldUpdateData(false);
     }
-  }, [filteredList, shouldUpdateData, originalData.length]);
+  }, [filteredList, shouldUpdateData, originalData.length,projectId]);
 
   //Functions
 

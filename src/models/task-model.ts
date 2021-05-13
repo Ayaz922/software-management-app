@@ -5,7 +5,7 @@ import { TaskStatus } from "./tast-status";
 export default interface TaskModel  {
   _id: string | undefined | null,
   title: string,
-  projectId: string | undefined,
+  projectId: string | undefined | null,
   description: string | undefined,
   status: TaskStatus,
   creator: string | undefined,

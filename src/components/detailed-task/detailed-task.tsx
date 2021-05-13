@@ -34,7 +34,6 @@ import {
 } from "../../utils/utils-functions";
 import CommentComponent from "../comments/comments";
 import TaskModel, { taskModel } from "../../models/task-model";
-import { TaskType } from "../../models/task-type";
 import { TaskStatus } from "../../models/tast-status";
 
 const DetailedTaskComponent = () => {
@@ -114,7 +113,7 @@ const DetailedTaskComponent = () => {
 
   //@ts-ignore
   const handleStatusChange = (e: any, { value }) => {
-    if (status != value) setStatus(value);
+    if (status !== value) setStatus(value);
     generateModal("Alert!", "Are you sure you want to change status?", () => {
       if (task._id)
         changeStatus(task._id, value, (success, message) => {

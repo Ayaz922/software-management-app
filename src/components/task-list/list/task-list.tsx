@@ -9,6 +9,7 @@ import { getAllTask } from "../../../api/task-api";
 import { apiCallback } from "../../../models/api-callback-function";
 import TaskModel from "../../../models/task-model";
 import { getCurrentUser } from "../../../user/user-profile";
+import useLocalStorage, { CURRENT_PROJECT } from "../../../utils/localstorage/localStorage";
 import CustomFilter from "../../filter/filter";
 import TaskCard from "../task-card/task-card";
 
@@ -17,23 +18,20 @@ const TaskList = () => {
   const [filteredList, setFilteredList] = useState<Array<TaskModel>>([]);
   const [shouldUpdateData, setShouldUpdateData] = useState(false);
   const [filterArray, setFilterArray] = useState<any>({});
-
-  type FilterOptions = {
-    type: undefined | string,
-    status: undefined | string,
-    priority: undefined | string,
-    user: undefined | string,
-    assignee: undefined | string,
-    sprint: undefined | string,
-    mytask: boolean,
-  }
-
-
+  const [projectId,setProjectId] = useState('');
+  
   //Use effect hook
   useEffect(() => {
     if (originalData.length === 0 || shouldUpdateData) {
       console.log("Console: Updating the data: " + shouldUpdateData);
-      getAllTask(callback);
+      let pid = localStorage.getItem(CURRENT_PROJECT);
+      pid = pid?JSON.parse(pid):"";
+      if(pid!=null)
+        setProjectId(pid)
+      if(projectId!=null)
+        getAllTask(projectId,callback);
+      else
+        alert('No project selected');
       setShouldUpdateData(false);
     }
   }, [filteredList, shouldUpdateData, filterArray, originalData.length]);
@@ -93,7 +91,7 @@ const TaskList = () => {
       case "mytask":
         if (filterArray[key]) {
           newArray = currentTaskList.filter((task) => {
-            return task.assignedUser === getCurrentUser();
+            return task.assignedUser === getCurrentUser().username;
           });
           break;
         } else {

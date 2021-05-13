@@ -1,6 +1,7 @@
 import { TaskType } from "../models/task-type";
 import { TaskStatus } from "../models/tast-status";
 import { Priority } from "../models/priority";
+import { CURRENT_PROJECT } from "./localstorage/localStorage";
 
 const taskStatusOptions = [
   { key: "BACKLOG", text: "Backlog", value: "BACKLOG" },
@@ -15,9 +16,9 @@ const taskStatusOptions = [
 ];
 
 const priorityItemOptions = [
-  { key: "Low", text: "Low", value: "LOW" },
-  { key: "medium", text: "Medium", value: "Medium" },
-  { key: "high", text: "High", value: "HIGH" },
+  { key: "l1", text: "Low", value: "LOW" },
+  { key: "m2", text: "Medium", value: "MEDIUM" },
+  { key: "h3", text: "High", value: "HIGH" },
 ];
 const taskTypeOptions = [
   { key: TaskType.USER_STORY, text: "User story", value: TaskType.USER_STORY },
@@ -117,7 +118,12 @@ const getPriorityByString = (priority: string): Priority => {
 };
 
 const getProjectId = () => {
-  return "Project01";
+  let projectId = localStorage.getItem(CURRENT_PROJECT);
+  if(projectId){
+    projectId = JSON.parse(projectId);
+    return projectId;
+  }
+  return 'NA';
 };
 
 export {

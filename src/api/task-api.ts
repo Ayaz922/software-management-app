@@ -1,10 +1,14 @@
-import axiosInstance from "./axios";
+import getAxiosInstance from "./axios";
 import { getCurrentUser } from "../user/user-profile";
 import TaskModel from "../models/task-model";
 import { apiCallback } from "../models/api-callback-function";
 import CommentModel from "../models/comment-model";
 import { TaskStatus } from "../models/tast-status";
+import { CURRENT_PROJECT } from "../utils/localstorage/localStorage";
+import { getProjectId } from "../utils/general_data";
 const url = "/task";
+
+const axiosInstance = getAxiosInstance()
 
 const addTask = (taskModel: TaskModel, callback: apiCallback) => {
   axiosInstance.post(url, taskModel).then(
@@ -44,11 +48,11 @@ const editTask = (taskModel: TaskModel, callback: apiCallback) => {
   );
 };
 
-const getAllTask = (callback: apiCallback) => {
-  axiosInstance.get(url).then(
+const getAllTask = (projectId:string,callback: apiCallback) => {
+  
+  axiosInstance.get(url+"/?projectId="+projectId).then(
     (response) => {
       if (response.status === 200) {
-        console.log(response.data);
         callback(true, response.data);
       } else {
         console.log(response.data);
@@ -74,7 +78,7 @@ const getTask = (taskId: string, callback: apiCallback) => {
 };
 
 const assignTaskToMe = (taskModel: TaskModel, callback: apiCallback) => {
-  const userId = getCurrentUser();
+  const userId = getCurrentUser().username;
   const body = {
     assignedUser: userId,
   };

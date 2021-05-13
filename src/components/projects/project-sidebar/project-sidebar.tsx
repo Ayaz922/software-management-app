@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Menu } from "semantic-ui-react";
 import ProjectModel from "../../../models/project-model";
 
