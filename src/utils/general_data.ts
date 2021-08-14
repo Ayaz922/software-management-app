@@ -119,11 +119,15 @@ const getPriorityByString = (priority: string): Priority => {
 
 const getProjectId = () => {
   let projectId = localStorage.getItem(CURRENT_PROJECT);
-  if(projectId){
-    projectId = JSON.parse(projectId);
-    return projectId;
+  if (projectId) {
+    try {
+      projectId = JSON.parse(projectId);
+      return projectId;
+    } catch (err) {
+      return "NA";
+    }
   }
-  return 'NA';
+  return "NA";
 };
 
 export {

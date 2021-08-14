@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import {
   CardGroup,
   Grid,
@@ -13,47 +14,51 @@ import useLocalStorage, { CURRENT_PROJECT } from "../../../utils/localstorage/lo
 import CustomFilter from "../../filter/filter";
 import TaskCard from "../task-card/task-card";
 
-const TaskList = () => {
+const TaskList = ({ projectReducer }: any) => {
   const [originalData, setOriginalData] = useState<Array<TaskModel>>([]);
   const [filteredList, setFilteredList] = useState<Array<TaskModel>>([]);
   const [shouldUpdateData, setShouldUpdateData] = useState(false);
   const [filterArray, setFilterArray] = useState<any>({});
-  const [projectId,setProjectId] = useState('');
-  
+
+
+  useEffect(() => {
+    if (projectReducer.projectId != null && projectReducer.projectId !== '') {
+      getAllTask("60a893ca6694da3ec86f6429", callback);
+      console.log('Loading data for project Id : ' + "60a893ca6694da3ec86f6429")
+    }
+    else
+      alert('No project selected');
+  }, [projectReducer.projectId])
+
+
   //Use effect hook
   useEffect(() => {
     if (originalData.length === 0 || shouldUpdateData) {
       console.log("Console: Updating the data: " + shouldUpdateData);
-      let pid = localStorage.getItem(CURRENT_PROJECT);
-      pid = pid?JSON.parse(pid):"";
-      if(pid!=null)
-        setProjectId(pid)
-      if(projectId!=null)
-        getAllTask(projectId,callback);
-      else
-        alert('No project selected');
       setShouldUpdateData(false);
     }
-  }, [filteredList, shouldUpdateData, filterArray, originalData.length]);
+  }, [filteredList, shouldUpdateData, filterArray, originalData.length, projectReducer.projectId]);
 
   //Functions
 
   //Callback after fetching the data from server
-  const callback:apiCallback = (success, data) => {
+  const callback: apiCallback = (success, data) => {
     if (success) {
+      console.log(data)
       setOriginalData(data);
       setFilteredList(data);
     } else {
       console.log("ERROR WHILE FETCHING THE DATA: " + data);
     }
   };
-  
-  type FilterItem ={
-    type:string,
-    value:undefined | string | boolean
+
+
+  type FilterItem = {
+    type: string,
+    value: undefined | string | boolean
   }
   //Callback for item clicked in dropdown
-  const onDropdownItemClicked = (item:FilterItem) => {
+  const onDropdownItemClicked = (item: FilterItem) => {
     let tempArray = filterArray;
     tempArray[item.type] = item.value;
     setFilterArray(tempArray);
@@ -68,7 +73,7 @@ const TaskList = () => {
     setFilteredList(listAfterFilter);
   };
 
-  const getFilteredArray = (key:string, currentTaskList:Array<TaskModel>) => {
+  const getFilteredArray = (key: string, currentTaskList: Array<TaskModel>) => {
     let newArray = [];
     console.log(key);
     if (filterArray[key] === "" || !filterArray[key]) return currentTaskList;
@@ -138,18 +143,40 @@ const TaskList = () => {
     );
   }
 
+  console.log(cards);
   return (
-    <div>
-      <Grid>
-        <GridColumn width={13}>
-          <CardGroup>{cards}</CardGroup>
-        </GridColumn>
-        <GridColumn width={3}>
-          <CustomFilter onItemClicked={onDropdownItemClicked} />
-        </GridColumn>
-      </Grid>
+    <div className="componentContainer">
+      {projectReducer.projectId == 'NA' ?
+        (
+          <Message
+            warning
+            style={{ position: "relative", top: "30%", left: "25%", width:'50%' }}
+            header="No Project Selected"
+            loading
+            list={[
+              "Please select a project from dropdown in the above menu",
+              "If not assigned to any project, ask your PM to assign you a project",
+              "Check internet connectivity",
+            ]}
+          />)
+        :
+        (
+          <Grid>
+            <GridColumn width={13}>
+              <CardGroup>{cards}</CardGroup>
+            </GridColumn>
+            <GridColumn width={3}>
+              <CustomFilter onItemClicked={onDropdownItemClicked} />
+            </GridColumn>
+          </Grid>
+        )
+      }
     </div>
   );
 };
 
-export default TaskList;
+const mapStateToProps = (state: any) => {
+  return { projectReducer: state.projectReducer }
+}
+
+export default connect(mapStateToProps)(TaskList);

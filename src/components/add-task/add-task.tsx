@@ -76,7 +76,7 @@ const AddTaskComponent = () => {
     taskModel.assignedUser = assignedUser;
     taskModel.taskType = taskType;
     taskModel.lables = lables;
-    taskModel.projectId = projectId;
+    taskModel.projectId = "609185a4aa39c94d64777944";
     showLoading(true);
     console.log(taskModel)
     addTask(taskModel, (success, data, message) => {

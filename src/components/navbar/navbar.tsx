@@ -5,20 +5,23 @@ import { apiCallback } from "../../models/api-callback-function";
 import { getMyProjects } from "../../api/user-api";
 import useLocalStorage, { CURRENT_PROJECT, LOGGED_IN } from "../../utils/localstorage/localStorage";
 import ProjectModel from "../../models/project-model";
-import {useStore, useDispatch, connect, useSelector} from 'react-redux'
+import {useDispatch, connect} from 'react-redux'
 import { setProjectId } from "../../redux/actions/project/project-actions";
 
 type PropType = {
   logoutCallback: () => void,
-  reload: () => void
+  reload: () => void,
+  createTask: ()=>void,
+  projectState:any
 }
 
-function Navbar({projectState}:any) {
+function Navbar({projectState,logoutCallback,reload,createTask}:PropType) {
+
   const [activeItem, setActiveItem] = useState('');
   const [isLoggedIn] = useLocalStorage(LOGGED_IN)
+  const [lastProject, setLastProject] = useLocalStorage(CURRENT_PROJECT);
   const dispacth = useDispatch();
   const projectOptions: any = []
-  console.log('Project State',projectState)
 
   const handleItemClick = (e: any, { name }: any) => {
     setActiveItem(name);
@@ -31,25 +34,24 @@ function Navbar({projectState}:any) {
           text: project.projectName,
           value: project._id,
         })
-        if (projectOptions.length > 0) {
-          //dispacth(setProjectId(projectOptions[0].key))
-        }
       })
     } else {
-      alert(data)
+      alert("Fuck: "+data)
     }
   }
 
   useEffect(() => {
-    const currentURL = window.location.href;
-    if (currentURL.includes("tasks")) setActiveItem("Tasks");
-    else if (currentURL.includes("add-task")) setActiveItem("Add Task");
-    else if (currentURL.includes("project")) setActiveItem("Projects");
-    else setActiveItem("home");
-    //Load project options of the projects
-    if (isLoggedIn && projectOptions.length == 0)
-      getMyProjects(callback);
-    
+    //dispacth(setProjectId("60a893ca6694da3ec86f6429"))
+    // const currentURL = window.location.href;
+    // if (currentURL.includes("tasks")) setActiveItem("Tasks");
+    // else if (currentURL.includes("add-task")) setActiveItem("Add Task");
+    // else if (currentURL.includes("project")) setActiveItem("Projects");
+    // else setActiveItem("home");
+    // // //Load project options of the projects
+    // // if (isLoggedIn && projectOptions.length == 0){
+    // //   getMyProjects(callback);
+    // //   dispacth(setProjectId(lastProject))
+    // // }
   }, [activeItem, projectOptions, ]);
 
   return (
@@ -73,14 +75,6 @@ function Navbar({projectState}:any) {
 
         <Menu.Item
           as={Link}
-          to="/add-task"
-          name="Add Task"
-          active={activeItem === "Add Task"}
-          onClick={handleItemClick}
-        />
-
-        <Menu.Item
-          as={Link}
           to="/project"
           name="Projects"
           active={activeItem === "Projects"}
@@ -98,9 +92,7 @@ function Navbar({projectState}:any) {
               value={projectState.projectId}
               onChange={(e, { value }:any) => {
                 dispacth(setProjectId(value))
-                //setCurrentProject(value);
-                //setCurrentProjectId(value);
-                //reload();
+                setLastProject(value);
               }}
             />
           </Menu.Item>
@@ -111,7 +103,7 @@ function Navbar({projectState}:any) {
               basic
               icon='add'
               content='Create'
-              onClick={() => { alert('Not implemented yet') }}
+              onClick={() => { createTask()}}
             />
           </Menu.Item>
           <Menu.Item as={Button} size="tiny">
@@ -122,7 +114,7 @@ function Navbar({projectState}:any) {
               content='Logout'
               color='black'
               onClick={() => {
-                //logoutCallback()
+                logoutCallback()
               }}
             />
           </Menu.Item>

@@ -1,31 +1,48 @@
 .App {
   text-align: center;
 }
-.homeContainer{
+.homeContainer {
   padding-top: 16px;
   background-color: blue;
 }
 
-.subhead{
+.subhead {
   font-size: medium;
   padding: 0px 0;
   color: blue;
 }
 
-.emptySpace{
+.emptySpace {
   padding-top: 16px;
 }
-.padHorizontal{
+.padHorizontal {
   padding-right: 16px;
 }
-.wrapper{
+.wrapper {
   padding: 0px 8px;
 }
 
-.navbar{
-  position:absolute;
+.navbar {
+  position: absolute;
 }
-.content{
- position: relative;
- padding-top: 3%;
+.content {
+  position: relative;
+  padding-top: 3%;
+}
+.appContainer {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.mainContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.componentContainer{
+  position:'absolute';
+  height: 100vh;
+  width: 100%
 }
